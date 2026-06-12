@@ -1,5 +1,19 @@
 import { redirect } from "next/navigation"
+import Link from "next/link"
 import { auth } from "@/lib/auth"
+import { getRoleLevel } from "@/lib/validations/user"
+import {
+  LayoutDashboard,
+  Package,
+  FolderTree,
+  Tag,
+  ShoppingCart,
+  Users,
+  BarChart3,
+  Megaphone,
+  Settings,
+  Shield,
+} from "lucide-react"
 
 export default async function AdminLayout({
   children,
@@ -15,7 +29,7 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-screen">
       <aside className="hidden w-64 border-r bg-card lg:block">
-        <AdminSidebar />
+        <AdminSidebar userRole={session.user.role as string} />
       </aside>
       <div className="flex flex-1 flex-col">
         <AdminNavbar user={session.user} />
@@ -25,7 +39,22 @@ export default async function AdminLayout({
   )
 }
 
-function AdminSidebar() {
+const sidebarIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  LayoutDashboard,
+  Package,
+  FolderTree,
+  Tag,
+  ShoppingCart,
+  Users,
+  BarChart3,
+  Megaphone,
+  Settings,
+  Shield,
+}
+
+function AdminSidebar({ userRole }: { userRole: string }) {
+  const canManageUsers = getRoleLevel(userRole) >= 3
+
   const links = [
     { href: "/admin", label: "Dashboard", icon: "LayoutDashboard" },
     { href: "/admin/productos", label: "Productos", icon: "Package" },
@@ -35,6 +64,7 @@ function AdminSidebar() {
     { href: "/admin/clientes", label: "Clientes", icon: "Users" },
     { href: "/admin/reportes", label: "Reportes", icon: "BarChart3" },
     { href: "/admin/promociones", label: "Promociones", icon: "Megaphone" },
+    ...(canManageUsers ? [{ href: "/admin/usuarios", label: "Usuarios", icon: "Shield" as const }] : []),
     { href: "/admin/configuracion", label: "Configuración", icon: "Settings" },
   ]
 
@@ -44,15 +74,19 @@ function AdminSidebar() {
         Container Admin
       </div>
       <nav className="flex-1 space-y-1 p-4">
-        {links.map((link) => (
-          <a
-            key={link.href}
-            href={link.href}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            <span>{link.label}</span>
-          </a>
-        ))}
+        {links.map((link) => {
+          const Icon = sidebarIcons[link.icon]
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              {Icon && <Icon className="h-4 w-4" />}
+              <span>{link.label}</span>
+            </Link>
+          )
+        })}
       </nav>
     </div>
   )
