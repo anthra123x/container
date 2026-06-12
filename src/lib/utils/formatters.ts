@@ -1,21 +1,24 @@
+const LOCALE = "es-CO"
+const CURRENCY = "COP"
+
 export function formatCurrency(amount: number | string | { toNumber: () => number } | null | undefined): string {
-  if (amount === null || amount === undefined) return "S/ 0.00"
+  if (amount === null || amount === undefined) return "$ 0.00"
   let num: number
   if (typeof amount === "object" && "toNumber" in amount) {
     num = amount.toNumber()
   } else {
     num = typeof amount === "string" ? parseFloat(amount) : amount
   }
-  return new Intl.NumberFormat("es-PE", {
+  return new Intl.NumberFormat(LOCALE, {
     style: "currency",
-    currency: "PEN",
+    currency: CURRENCY,
   }).format(num)
 }
 
 export function formatDate(date: Date | string | null | undefined): string {
   if (!date) return ""
   const d = typeof date === "string" ? new Date(date) : date
-  return new Intl.DateTimeFormat("es-PE", {
+  return new Intl.DateTimeFormat(LOCALE, {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -25,7 +28,7 @@ export function formatDate(date: Date | string | null | undefined): string {
 export function formatDateTime(date: Date | string | null | undefined): string {
   if (!date) return ""
   const d = typeof date === "string" ? new Date(date) : date
-  return new Intl.DateTimeFormat("es-PE", {
+  return new Intl.DateTimeFormat(LOCALE, {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",

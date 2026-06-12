@@ -144,7 +144,7 @@ export default async function AdminUsersPage() {
                   </td>
                   <td className="px-5 py-4 text-sm text-gray-500">
                     {user.lastLoginAt
-                      ? user.lastLoginAt.toLocaleDateString("es-PE", {
+                      ? user.lastLoginAt.toLocaleDateString("es-CO", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",

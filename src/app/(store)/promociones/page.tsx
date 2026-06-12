@@ -69,7 +69,7 @@ export default async function PromocionesPage() {
                 </div>
                 <div className="mt-3 flex items-center gap-1 text-xs text-blue-200">
                   <Clock className="h-3.5 w-3.5" />
-                  <span>Válido hasta {promo.endsAt.toLocaleDateString("es-PE", { day: "numeric", month: "long", year: "numeric" })}</span>
+                  <span>Válido hasta {promo.endsAt.toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" })}</span>
                 </div>
               </div>
               {promo.products.length > 0 && (
