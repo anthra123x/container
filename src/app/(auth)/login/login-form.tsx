@@ -3,12 +3,11 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { signIn } from "next-auth/react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { loginSchema, type LoginInput } from "@/lib/validations/auth"
 import { useState } from "react"
 
 export function LoginForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") ?? "/admin"
   const [error, setError] = useState<string>()
@@ -35,8 +34,7 @@ export function LoginForm() {
       return
     }
 
-    router.push(callbackUrl)
-    router.refresh()
+    window.location.href = callbackUrl
   }
 
   return (
