@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { prisma } from "@/lib/db"
 import { formatDateTime } from "@/lib/utils/formatters"
 
@@ -13,6 +14,12 @@ export default async function AdminPromotionsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Promociones</h1>
+        <Link
+          href="/admin/promociones/nuevo"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        >
+          Nueva Promoción
+        </Link>
       </div>
 
       <div className="overflow-hidden rounded-lg border">

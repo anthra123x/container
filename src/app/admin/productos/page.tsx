@@ -1,11 +1,14 @@
 import Link from "next/link"
 import { prisma } from "@/lib/db"
+import { auth } from "@/lib/auth"
 import { formatCurrency } from "@/lib/utils/formatters"
 
 export const dynamic = "force-dynamic"
 
 export default async function AdminProductsPage() {
+  const session = await auth()
   const products = await prisma.product.findMany({
+    where: { storeId: session?.user?.storeId ?? "" },
     include: {
       category: true,
       images: { where: { isPrimary: true }, take: 1 },

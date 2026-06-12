@@ -1,20 +1,21 @@
 import { prisma } from "@/lib/db"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
+import { auth } from "@/lib/auth"
 
 export const dynamic = "force-dynamic"
 
-interface Props {
-  params: { id: string }
-}
+export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
 
-export default async function EditProductPage({ params }: Props) {
   const product = await prisma.product.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { category: true, brand: true },
   })
 
   if (!product) notFound()
+
+  const currentCategoryId = product.categoryId
 
   const [categories, brands] = await Promise.all([
     prisma.category.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
@@ -32,6 +33,9 @@ export default async function EditProductPage({ params }: Props) {
 
       <form action={async (formData: FormData) => {
         "use server"
+        const currentSession = await auth()
+        if (!currentSession?.user) redirect("/login")
+
         const name = formData.get("name") as string
         const description = formData.get("description") as string
         const price = parseFloat(formData.get("price") as string)
@@ -43,7 +47,7 @@ export default async function EditProductPage({ params }: Props) {
         const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
 
         await prisma.product.update({
-          where: { id: params.id },
+          where: { id },
           data: {
             name,
             slug,
@@ -51,8 +55,8 @@ export default async function EditProductPage({ params }: Props) {
             price,
             stock,
             sku: sku || null,
-          categoryId: categoryId || (await prisma.product.findUnique({ where: { id: params.id }, select: { categoryId: true } }))?.categoryId || "",
-          brandId: brandId || null,
+            categoryId: categoryId || currentCategoryId,
+            brandId: brandId || null,
             isActive,
           },
         })

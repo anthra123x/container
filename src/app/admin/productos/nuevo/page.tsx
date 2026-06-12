@@ -6,7 +6,6 @@ import { auth } from "@/lib/auth"
 export const dynamic = "force-dynamic"
 
 export default async function NewProductPage() {
-  const session = await auth()
   const [categories, brands] = await Promise.all([
     prisma.category.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
     prisma.brand.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
@@ -23,6 +22,9 @@ export default async function NewProductPage() {
 
       <form action={async (formData: FormData) => {
         "use server"
+        const currentSession = await auth()
+        if (!currentSession?.user) redirect("/login")
+
         const name = formData.get("name") as string
         const description = formData.get("description") as string
         const price = parseFloat(formData.get("price") as string)
@@ -32,6 +34,8 @@ export default async function NewProductPage() {
         const sku = formData.get("sku") as string
         const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
 
+        if (!categoryId) redirect("/admin/productos/nuevo")
+
         await prisma.product.create({
           data: {
             name,
@@ -40,9 +44,9 @@ export default async function NewProductPage() {
             price,
             stock,
             sku: sku || null,
-          categoryId: categoryId || (await prisma.category.findFirst({ where: { isActive: true }, orderBy: { sortOrder: "asc" }, select: { id: true } }))?.id || "",
-          brandId: brandId || null,
-            storeId: session?.user?.storeId ?? "",
+            categoryId,
+            brandId: brandId || null,
+            storeId: currentSession.user.storeId ?? "",
             isActive: true,
           },
         })

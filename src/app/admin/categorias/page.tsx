@@ -13,6 +13,12 @@ export default async function AdminCategoriesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Categorías</h1>
+        <Link
+          href="/admin/categorias/nuevo"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        >
+          Nueva Categoría
+        </Link>
       </div>
 
       <div className="overflow-hidden rounded-lg border">
@@ -40,7 +46,10 @@ export default async function AdminCategoriesPage() {
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right text-sm">
-                  <Link href={`/admin/productos?categoria=${cat.slug}`} className="text-blue-600 hover:underline">
+                  <Link href={`/admin/categorias/${cat.id}`} className="text-blue-600 hover:underline mr-3">
+                    Editar
+                  </Link>
+                  <Link href={`/admin/productos?categoria=${cat.slug}`} className="text-muted-foreground hover:underline">
                     Ver productos
                   </Link>
                 </td>

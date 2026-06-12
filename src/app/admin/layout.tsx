@@ -92,7 +92,7 @@ function AdminSidebar({ userRole }: { userRole: string }) {
   )
 }
 
-function AdminNavbar({ user }: { user: any }) {
+function AdminNavbar({ user }: { user: { name?: string | null } }) {
   return (
     <header className="flex h-14 items-center border-b bg-card px-6">
       <div className="flex-1" />

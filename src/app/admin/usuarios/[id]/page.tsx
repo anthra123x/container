@@ -8,11 +8,8 @@ import { updateUserSchema, ROLES_CONFIG, getRoleLevel } from "@/lib/validations/
 
 export const dynamic = "force-dynamic"
 
-interface Props {
-  params: { id: string }
-}
-
-export default async function EditUserPage({ params }: Props) {
+export default async function EditUserPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: userId } = await params
   const session = await auth()
   if (!session?.user) redirect("/login")
 
@@ -22,7 +19,6 @@ export default async function EditUserPage({ params }: Props) {
   if (currentLevel < 3) redirect("/admin")
 
   const storeId = session.user.storeId as string
-  const userId = params.id
 
   const user = await prisma.user.findFirst({
     where: { id: userId, storeId },

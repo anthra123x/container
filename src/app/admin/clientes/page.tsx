@@ -1,10 +1,13 @@
 import { prisma } from "@/lib/db"
+import { auth } from "@/lib/auth"
 import { formatCurrency } from "@/lib/utils/formatters"
 
 export const dynamic = "force-dynamic"
 
 export default async function AdminCustomersPage() {
+  const session = await auth()
   const customers = await prisma.customer.findMany({
+    where: { storeId: session?.user?.storeId ?? "" },
     orderBy: { createdAt: "desc" },
     take: 50,
   })
