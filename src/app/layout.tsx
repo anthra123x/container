@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "Container - Tienda de Tecnología",
     description: "Tu tienda de tecnología de confianza.",
     type: "website",
-    locale: "es_PE",
+    locale: "es_CO",
   },
 }
 
