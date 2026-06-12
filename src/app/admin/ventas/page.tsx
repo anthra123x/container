@@ -2,7 +2,7 @@ import Link from "next/link"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/db"
 import { formatCurrency, formatDateTime } from "@/lib/utils/formatters"
-import { ORDER_STATUS_LABELS } from "@/lib/constants"
+import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "@/lib/constants"
 
 export const dynamic = "force-dynamic"
 
@@ -10,13 +10,40 @@ export default async function AdminOrdersPage() {
   const session = await auth()
   const orders = await prisma.order.findMany({
     where: { storeId: session?.user?.storeId },
-    include: { items: true, _count: { select: { statusHistory: true } } },
     orderBy: { createdAt: "desc" },
   })
 
+  const totalRevenue = orders
+    .filter((o) => !["CANCELLED", "REFUNDED"].includes(o.status))
+    .reduce((sum, o) => sum + Number(o.total), 0)
+
+  const statusCounts: Record<string, number> = {}
+  for (const o of orders) {
+    statusCounts[o.status] = (statusCounts[o.status] || 0) + 1
+  }
+
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Ventas</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Ventas</h1>
+        <p className="text-sm text-muted-foreground">
+          Total ingresos: <span className="font-medium text-foreground">{formatCurrency(totalRevenue)}</span>
+          <span className="mx-2">&middot;</span>
+          {orders.length} pedidos
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {Object.entries(ORDER_STATUS_LABELS).map(([status, label]) => (
+          <span
+            key={status}
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${ORDER_STATUS_COLORS[status] ?? "bg-gray-100 text-gray-700"}`}
+          >
+            {label}
+            <span className="ml-1 opacity-70">({statusCounts[status] || 0})</span>
+          </span>
+        ))}
+      </div>
 
       <div className="overflow-hidden rounded-lg border">
         <table className="w-full">
@@ -43,7 +70,7 @@ export default async function AdminOrdersPage() {
                   {formatCurrency(order.total)}
                 </td>
                 <td className="px-4 py-3">
-                  <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
+                  <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${ORDER_STATUS_COLORS[order.status] ?? "bg-gray-100 text-gray-700"}`}>
                     {ORDER_STATUS_LABELS[order.status] ?? order.status}
                   </span>
                 </td>
@@ -51,13 +78,19 @@ export default async function AdminOrdersPage() {
                   {formatDateTime(order.createdAt)}
                 </td>
                 <td className="px-4 py-3 text-right text-sm">
-                  <Link href={`/admin/ventas/${order.id}`} className="text-blue-600 hover:underline">Ver</Link>
+                  <Link href={`/admin/ventas/${order.id}`} className="text-blue-600 hover:underline">Ver detalle</Link>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {orders.length === 0 && (
+        <div className="rounded-lg border border-dashed py-16 text-center">
+          <p className="text-sm text-muted-foreground">No hay ventas registradas</p>
+        </div>
+      )}
     </div>
   )
 }

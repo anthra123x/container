@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { auth } from "@/lib/auth"
+import { auth, signOut } from "@/lib/auth"
 import { getRoleLevel } from "@/lib/validations/user"
 import {
   LayoutDashboard,
@@ -93,12 +93,17 @@ function AdminSidebar({ userRole }: { userRole: string }) {
 }
 
 function AdminNavbar({ user }: { user: { name?: string | null } }) {
+  async function handleSignOut() {
+    "use server"
+    await signOut({ redirectTo: "/login" })
+  }
+
   return (
     <header className="flex h-14 items-center border-b bg-card px-6">
       <div className="flex-1" />
       <div className="flex items-center gap-4">
         <span className="text-sm text-muted-foreground">{user.name}</span>
-        <form action="/api/auth/signout" method="POST">
+        <form action={handleSignOut}>
           <button
             type="submit"
             className="text-sm text-muted-foreground hover:text-foreground"
