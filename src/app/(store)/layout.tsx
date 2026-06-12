@@ -2,8 +2,9 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Search, ShoppingCart, Menu, Package, X, Phone, Mail } from "lucide-react"
+import { Search, ShoppingCart, Menu, Package, X, Phone, Mail, User, LogIn } from "lucide-react"
 import { useState } from "react"
+import { useSession } from "next-auth/react"
 import { useCart } from "@/hooks/use-cart"
 
 const navLinks = [
@@ -27,6 +28,7 @@ function StoreNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const pathname = usePathname()
   const { totalItems } = useCart()
+  const { status } = useSession()
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200/50 bg-white/80 shadow-sm backdrop-blur-md">
@@ -75,6 +77,21 @@ function StoreNavbar() {
               </span>
             )}
           </Link>
+          {status === "authenticated" ? (
+            <Link
+              href="/admin"
+              className="hidden rounded-full p-2.5 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 md:inline-flex"
+            >
+              <User className="h-5 w-5" />
+            </Link>
+          ) : status === "unauthenticated" ? (
+            <Link
+              href="/login"
+              className="hidden rounded-full p-2.5 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 md:inline-flex"
+            >
+              <LogIn className="h-5 w-5" />
+            </Link>
+          ) : null}
           <button
             onClick={() => setMobileOpen(true)}
             className="rounded-full p-2.5 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 md:hidden"
@@ -121,6 +138,25 @@ function StoreNavbar() {
                   </Link>
                 )
               })}
+              {status === "authenticated" ? (
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-blue-50 hover:text-blue-600"
+                >
+                  <User className="h-4 w-4" />
+                  Panel Admin
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-blue-50 hover:text-blue-600"
+                >
+                  <LogIn className="h-4 w-4" />
+                  Iniciar sesión
+                </Link>
+              )}
             </nav>
             <div className="border-t px-5 py-4">
               <div className="flex items-center gap-3 text-sm text-gray-500">
