@@ -13,6 +13,7 @@ import {
   Megaphone,
   Settings,
   Shield,
+  ArrowLeft,
 } from "lucide-react"
 
 export default async function AdminLayout({
@@ -88,6 +89,15 @@ function AdminSidebar({ userRole }: { userRole: string }) {
           )
         })}
       </nav>
+      <div className="border-t p-4">
+        <Link
+          href="/"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Volver a la tienda</span>
+        </Link>
+      </div>
     </div>
   )
 }
