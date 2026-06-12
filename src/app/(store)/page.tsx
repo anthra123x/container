@@ -1,8 +1,8 @@
 import Link from "next/link"
-import Image from "next/image"
 import { prisma } from "@/lib/db"
-import { formatCurrency } from "@/lib/utils/formatters"
-import { ArrowRight, Package, Shield, Truck, CreditCard } from "lucide-react"
+import { ArrowRight, Package, Shield, Truck, CreditCard, Star } from "lucide-react"
+import { HeroImage } from "@/components/store/HeroImage"
+import { ProductCard } from "@/components/store/ProductCard"
 
 export const dynamic = "force-dynamic"
 
@@ -42,46 +42,77 @@ export default async function StoreHome() {
     <>
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-        <div className="relative mx-auto max-w-7xl px-4 py-24 md:py-36">
-          <div className="max-w-2xl">
-            <h1 className="text-4xl font-bold tracking-tight text-white md:text-6xl">
-              Tecnología para tu
-              <span className="block text-blue-200">día a día</span>
-            </h1>
-            <p className="mt-4 text-lg text-blue-100 md:text-xl">
-              Encuentra los mejores productos tecnológicos al mejor precio.
-              Originales, con garantía y envío rápido a todo el Perú.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link
-                href="/productos"
-                className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-blue-700 shadow-lg transition hover:bg-blue-50 hover:shadow-xl"
-              >
-                Ver productos
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/promociones"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/30 px-6 py-3 font-medium text-white transition hover:bg-white/10"
-              >
-                Promociones
-              </Link>
+        <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
+        <div className="absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-blue-400/20 blur-3xl" />
+
+        <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
+          <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
+            <div className="order-2 md:order-1">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm text-blue-100 backdrop-blur-sm">
+                <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                Tienda peruana de confianza
+              </div>
+              <h1 className="mt-6 text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl">
+                Tecnología para tu
+                <span className="mt-2 block bg-gradient-to-r from-blue-200 to-white bg-clip-text text-transparent">
+                  día a día
+                </span>
+              </h1>
+              <p className="mt-4 max-w-lg text-base leading-relaxed text-blue-100/80 md:text-lg">
+                En Container encuentras tecnología original con la mejor atención. 
+                Te ayudamos a elegir el producto perfecto para ti.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/productos"
+                  className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-blue-700 shadow-lg transition-all hover:bg-blue-50 hover:shadow-xl active:scale-[0.98]"
+                >
+                  Ver productos
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/promociones"
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-6 py-3 font-medium text-white backdrop-blur-sm transition-all hover:bg-white/10 active:scale-[0.98]"
+                >
+                  Promociones
+                </Link>
+              </div>
+              <div className="mt-8 flex items-center gap-6 text-sm text-blue-200">
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-1.5">
+                    <div className="h-6 w-6 rounded-full border-2 border-blue-600 bg-green-400" />
+                    <div className="h-6 w-6 rounded-full border-2 border-blue-600 bg-yellow-400" />
+                    <div className="h-6 w-6 rounded-full border-2 border-blue-600 bg-blue-400" />
+                  </div>
+                  <span>+500 clientes</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <span>4.9/5</span>
+                </div>
+              </div>
+            </div>
+            <div className="order-1 md:order-2 flex justify-center">
+              <HeroImage />
             </div>
           </div>
         </div>
-        <div className="absolute -bottom-1 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent" />
+        <div className="absolute -bottom-1 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent" />
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-12">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <section className="mx-auto max-w-7xl px-4 -mt-8 relative z-10 pb-12">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {benefits.map((benefit) => (
-            <div key={benefit.title} className="flex items-start gap-3 rounded-xl border bg-white p-4 shadow-sm">
-              <div className="rounded-lg bg-blue-50 p-2">
+            <div
+              key={benefit.title}
+              className="group flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-lg"
+            >
+              <div className="rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 p-2.5 transition-colors group-hover:from-blue-100 group-hover:to-blue-200">
                 <benefit.icon className="h-5 w-5 text-blue-600" />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-gray-900">{benefit.title}</h3>
-                <p className="text-xs text-gray-500">{benefit.desc}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-gray-500">{benefit.desc}</p>
               </div>
             </div>
           ))}
@@ -89,26 +120,39 @@ export default async function StoreHome() {
       </section>
 
       {categories.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 pb-12">
+        <section className="mx-auto max-w-7xl px-4 pb-16">
           <div className="mb-8 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">Categorías</h2>
-            <Link href="/productos" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">Categorías</h2>
+              <p className="mt-1 text-sm text-gray-500">Explora por categoría</p>
+            </div>
+            <Link
+              href="/productos"
+              className="hidden items-center gap-1 text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 sm:flex"
+            >
               Ver todas
+              <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map((cat, i) => (
+            {categories.map((cat) => (
               <Link
                 key={cat.id}
                 href={`/productos?categoria=${cat.slug}`}
-                className="group relative overflow-hidden rounded-xl border bg-white p-6 shadow-sm transition hover:shadow-md"
+                className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-100 hover:shadow-xl"
               >
-                <div className="absolute right-0 top-0 h-24 w-24 translate-x-6 -translate-y-6 rounded-full bg-blue-50 transition group-hover:scale-150" />
+                <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 transition-all duration-500 group-hover:scale-[2] group-hover:from-blue-100 group-hover:to-blue-200" />
                 <div className="relative">
-                  <h3 className="font-semibold text-gray-900 group-hover:text-blue-600">{cat.name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
+                    {cat.name}
+                  </h3>
                   {cat.description && (
-                    <p className="mt-1 text-sm text-gray-500">{cat.description}</p>
+                    <p className="mt-1.5 text-sm leading-relaxed text-gray-500">{cat.description}</p>
                   )}
+                  <div className="mt-4 flex items-center gap-1 text-sm font-medium text-blue-600 opacity-0 transition-all group-hover:opacity-100">
+                    Ver productos
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                  </div>
                 </div>
               </Link>
             ))}
@@ -117,68 +161,69 @@ export default async function StoreHome() {
       )}
 
       {products.length > 0 && (
-        <section className="bg-gray-50 py-12">
+        <section className="bg-gray-50/80 py-16">
           <div className="mx-auto max-w-7xl px-4">
             <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">Productos Destacados</h2>
-              <Link href="/productos" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">Productos Destacados</h2>
+                <p className="mt-1 text-sm text-gray-500">Lo más vendido de la semana</p>
+              </div>
+              <Link
+                href="/productos"
+                className="hidden items-center gap-1 text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 sm:flex"
+              >
                 Ver todo
+                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {products.map((product) => (
-                <Link
+                <ProductCard
                   key={product.id}
-                  href={`/productos/${product.slug}`}
-                  className="group rounded-xl border bg-white shadow-sm transition hover:shadow-md"
-                >
-                  <div className="relative aspect-square overflow-hidden rounded-t-xl bg-gray-100">
-                    {product.images[0] ? (
-                      <img
-                        src={product.images[0].url}
-                        alt={product.images[0].alt ?? product.name}
-                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <Package className="h-12 w-12 text-gray-300" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-gray-500">{product.category.name}</p>
-                    <h3 className="mt-1 font-medium text-gray-900 line-clamp-2">{product.name}</h3>
-                    <p className="mt-2 text-lg font-bold text-blue-600">
-                      {formatCurrency(product.price)}
-                    </p>
-                    {product.comparePrice && Number(product.comparePrice) > Number(product.price) && (
-                      <div className="mt-1 flex items-center gap-2">
-                        <p className="text-sm text-gray-400 line-through">
-                          {formatCurrency(product.comparePrice)}
-                        </p>
-                        <span className="rounded bg-red-50 px-1.5 py-0.5 text-xs font-medium text-red-600">
-                          -{Math.round((1 - Number(product.price) / Number(product.comparePrice)) * 100)}%
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </Link>
+                  slug={product.slug}
+                  name={product.name}
+                  price={Number(product.price)}
+                  comparePrice={product.comparePrice ? Number(product.comparePrice) : null}
+                  imageUrl={product.images[0]?.url ?? null}
+                  imageAlt={product.images[0]?.alt ?? null}
+                  categoryName={product.category?.name}
+                  stock={product.stock}
+                />
               ))}
+            </div>
+            <div className="mt-8 text-center sm:hidden">
+              <Link
+                href="/productos"
+                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-medium text-gray-900 shadow-sm transition-all hover:border-blue-200 hover:text-blue-600"
+              >
+                Ver todos los productos
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </section>
       )}
 
-      <section className="mx-auto max-w-7xl px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold text-gray-900">¿Listo para comprar?</h2>
-        <p className="mt-2 text-gray-500">Explora nuestro catálogo y encuentra lo que necesitas</p>
-        <Link
-          href="/productos"
-          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-3 font-semibold text-white shadow-lg transition hover:bg-blue-700"
-        >
-          Ir a la tienda
-          <ArrowRight className="h-4 w-4" />
-        </Link>
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 py-20">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-20" />
+        <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-blue-400/20 blur-3xl" />
+        <div className="absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
+        <div className="relative mx-auto max-w-2xl px-4 text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
+            ¿Listo para comprar?
+          </h2>
+          <p className="mt-3 text-lg leading-relaxed text-blue-100/80">
+            Explora nuestro catálogo y encuentra el producto perfecto para ti.
+            Atención personalizada en cada compra.
+          </p>
+          <Link
+            href="/productos"
+            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 font-semibold text-blue-700 shadow-lg transition-all hover:bg-blue-50 hover:shadow-xl active:scale-[0.98]"
+          >
+            Ir a la tienda
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </section>
     </>
   )

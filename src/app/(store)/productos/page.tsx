@@ -1,6 +1,7 @@
 import Link from "next/link"
+import type { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/db"
-import { formatCurrency } from "@/lib/utils/formatters"
+import { ProductCard } from "@/components/store/ProductCard"
 
 export const dynamic = "force-dynamic"
 
@@ -12,7 +13,7 @@ export default async function StoreProductsPage({ searchParams }: Props) {
   const search = searchParams.q
   const categorySlug = searchParams.categoria
 
-  const where: any = { isActive: true }
+  const where: Prisma.ProductWhereInput = { isActive: true }
 
   if (search) {
     where.OR = [
@@ -38,65 +39,87 @@ export default async function StoreProductsPage({ searchParams }: Props) {
     prisma.category.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
   ])
 
+  const activeCategory = categorySlug
+    ? categories.find((c) => c.slug === categorySlug)
+    : null
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="flex gap-8">
         <aside className="hidden w-64 shrink-0 lg:block">
-          <h2 className="mb-4 font-semibold">Categorías</h2>
-          <div className="space-y-2">
-            <Link
-              href="/productos"
-              className="block text-sm text-muted-foreground hover:text-foreground"
-            >
-              Todas
-            </Link>
-            {categories.map((cat) => (
+          <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+            <h2 className="mb-3 text-sm font-semibold tracking-wide text-gray-900">Categorías</h2>
+            <div className="space-y-1">
               <Link
-                key={cat.id}
-                href={`/productos?categoria=${cat.slug}`}
-                className="block text-sm text-muted-foreground hover:text-foreground"
+                href="/productos"
+                className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
+                  !activeCategory
+                    ? "bg-blue-50 font-medium text-blue-600"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-blue-600"
+                }`}
               >
-                {cat.name}
+                Todas
               </Link>
-            ))}
+              {categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/productos?categoria=${cat.slug}`}
+                  className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
+                    activeCategory?.slug === cat.slug
+                      ? "bg-blue-50 font-medium text-blue-600"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-blue-600"
+                  }`}
+                >
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
           </div>
         </aside>
 
         <div className="flex-1">
-          <h1 className="mb-6 text-2xl font-bold">
-            {search ? `Resultados para "${search}"` : "Productos"}
-          </h1>
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+              {search ? `Resultados para "${search}"` : activeCategory ? activeCategory.name : "Productos"}
+            </h1>
+            {!search && (
+              <p className="mt-1 text-sm text-gray-500">
+                {products.length} producto{products.length !== 1 ? "s" : ""} disponible{products.length !== 1 ? "s" : ""}
+              </p>
+            )}
+          </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((product) => (
-              <Link
+              <ProductCard
                 key={product.id}
-                href={`/productos/${product.slug}`}
-                className="group rounded-lg border bg-card transition hover:shadow-md"
-              >
-                <div className="aspect-square overflow-hidden rounded-t-lg bg-muted">
-                  {product.images[0] && (
-                    <img
-                      src={product.images[0].url}
-                      alt={product.images[0].alt ?? product.name}
-                      className="h-full w-full object-cover transition group-hover:scale-105"
-                    />
-                  )}
-                </div>
-                <div className="p-4">
-                  <p className="text-xs text-muted-foreground">{product.category.name}</p>
-                  <h3 className="mt-1 font-medium">{product.name}</h3>
-                  <p className="mt-2 text-lg font-bold text-blue-600">
-                    {formatCurrency(product.price)}
-                  </p>
-                </div>
-              </Link>
+                slug={product.slug}
+                name={product.name}
+                price={Number(product.price)}
+                comparePrice={product.comparePrice ? Number(product.comparePrice) : null}
+                imageUrl={product.images[0]?.url ?? null}
+                imageAlt={product.images[0]?.alt ?? null}
+                categoryName={product.category?.name}
+                stock={product.stock}
+              />
             ))}
           </div>
 
           {products.length === 0 && (
-            <div className="py-12 text-center text-muted-foreground">
-              No se encontraron productos
+            <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/50 py-16 text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 11.625l2.25-2.25M12 11.625l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900">No se encontraron productos</h2>
+              <p className="mt-1 text-sm text-gray-500">Intenta con otra categoría o término de búsqueda</p>
+              <Link
+                href="/productos"
+                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+              >
+                Ver todos los productos
+              </Link>
             </div>
           )}
         </div>
