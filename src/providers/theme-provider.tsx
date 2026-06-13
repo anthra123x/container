@@ -4,13 +4,6 @@ import { createContext, useCallback, useContext, useMemo, useState } from "react
 
 type Theme = "light" | "dark"
 
-function getInitialTheme(): Theme {
-  if (typeof window === "undefined") return "light"
-  const stored = localStorage.getItem("theme") as Theme | null
-  if (stored === "light" || stored === "dark") return stored
-  return "light"
-}
-
 function applyTheme(theme: Theme) {
   if (typeof document === "undefined") return
   document.documentElement.classList.toggle("dark", theme === "dark")
@@ -29,7 +22,7 @@ export function useTheme() {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme)
+  const [theme, setTheme] = useState<Theme>("light")
 
   applyTheme(theme)
 

@@ -50,7 +50,7 @@ export default async function StoreHome() {
             <div className="order-2 md:order-1">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm text-blue-100 backdrop-blur-sm">
                 <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                Tienda peruana de confianza
+                Tienda colombiana de confianza
               </div>
               <h1 className="mt-6 text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl">
                 Tecnología para tu
