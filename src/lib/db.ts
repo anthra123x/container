@@ -6,11 +6,10 @@ const globalForPrisma = globalThis as unknown as { prisma: PrismaClient; pool: p
 
 function createPrismaClient() {
   const url = process.env.DATABASE_URL!
-  const poolUrl = process.env.DATABASE_POOL_URL || url
   const pool = new pg.Pool({
-    connectionString: poolUrl,
+    connectionString: url,
     ssl: { rejectUnauthorized: false },
-    max: 3,
+    max: 2,
     idleTimeoutMillis: 5000,
     connectionTimeoutMillis: 5000,
   })
