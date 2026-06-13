@@ -160,7 +160,7 @@ export default async function ProductDetailPage({ params }: Props) {
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-500">
               <Truck className="h-4 w-4" />
-              <span>Envío rápido a todo el Perú</span>
+              <span>Envío rápido a todo Colombia</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-500">
               <Shield className="h-4 w-4" />

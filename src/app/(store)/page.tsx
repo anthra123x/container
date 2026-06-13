@@ -26,9 +26,9 @@ async function getCategories() {
 }
 
 const benefits = [
-  { icon: Truck, title: "Envío Rápido", desc: "Entrega en 24-48 horas en Lima" },
+  { icon: Truck, title: "Envío Rápido", desc: "Entrega en 24-48 horas en El Banco" },
   { icon: Shield, title: "Garantía", desc: "Todos los productos con garantía" },
-  { icon: CreditCard, title: "Pago Seguro", desc: "Tarjeta, Yape, Plin o contraentrega" },
+  { icon: CreditCard, title: "Pago Seguro", desc: "Tarjeta, Nequi, Daviplata o contraentrega" },
   { icon: Package, title: "Originales", desc: "100% productos originales" },
 ]
 

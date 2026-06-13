@@ -7,7 +7,7 @@ export default function ContactoPage() {
       </p>
       <div className="mt-8 space-y-4">
         <a
-          href="https://wa.me/51999999999"
+          href="https://wa.me/573000000000"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-md bg-green-600 px-6 py-3 text-white hover:bg-green-700"

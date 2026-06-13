@@ -65,7 +65,7 @@ export default async function NewProductPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Precio (S/)</label>
+                <label className="block text-sm font-medium mb-1">Precio ($)</label>
                 <input name="price" type="number" step="0.01" required className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>

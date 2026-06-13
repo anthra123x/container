@@ -40,7 +40,7 @@ export default async function AdminPromotionsPage() {
               return (
                 <tr key={promo.id} className="hover:bg-muted/50">
                   <td className="px-4 py-3 text-sm font-medium">{promo.name}</td>
-                  <td className="px-4 py-3 text-sm">{promo.type === "PERCENTAGE" && Number(promo.value) > 0 ? `${Number(promo.value)}%` : promo.type === "FIXED_AMOUNT" ? `S/ ${Number(promo.value).toFixed(2)}` : "-"}</td>
+                  <td className="px-4 py-3 text-sm">{promo.type === "PERCENTAGE" && Number(promo.value) > 0 ? `${Number(promo.value)}%` : promo.type === "FIXED_AMOUNT" ? `$ ${Number(promo.value).toFixed(2)}` : "-"}</td>
                   <td className="px-4 py-3 text-sm">{promo._count.products}</td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">
                     {formatDateTime(promo.startsAt)} - {formatDateTime(promo.endsAt)}

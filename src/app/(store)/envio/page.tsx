@@ -13,15 +13,15 @@ export default function EnvioPage() {
       <div className="space-y-6 text-muted-foreground">
         <section>
           <h2 className="mb-2 text-lg font-semibold text-foreground">Cobertura</h2>
-          <p>Realizamos envíos a todo el Perú. Lima Metropolitana recibe en 24-48 horas hábiles, provincias en 3-7 días hábiles.</p>
+          <p>Realizamos envíos a todo Colombia. El Banco (Magdalena) recibe en 24-48 horas hábiles, otros municipios en 3-7 días hábiles.</p>
         </section>
 
         <section>
           <h2 className="mb-2 text-lg font-semibold text-foreground">Costos de envío</h2>
           <ul className="list-disc space-y-1 pl-5">
-            <li>Lima Metropolitana: S/ 9.90</li>
-            <li>Provincias: S/ 19.90</li>
-            <li>Envío gratis en compras mayores a S/ 299</li>
+            <li>El Banco (Magdalena): $ 5.000</li>
+            <li>Resto del país: $ 15.000</li>
+            <li>Envío gratis en compras mayores a $ 150.000</li>
           </ul>
         </section>
 

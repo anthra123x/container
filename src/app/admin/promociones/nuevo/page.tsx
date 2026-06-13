@@ -67,7 +67,7 @@ export default async function NewPromotionPage() {
                 className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="PERCENTAGE">Porcentaje (%)</option>
-                <option value="FIXED_AMOUNT">Monto fijo (S/)</option>
+                <option value="FIXED_AMOUNT">Monto fijo ($)</option>
               </select>
             </div>
             <div>
