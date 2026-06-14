@@ -34,7 +34,8 @@ export default async function AdminLayout({
       </aside>
       <div className="flex flex-1 flex-col">
         <AdminNavbar user={session.user} />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-4 pb-20 md:p-6 md:pb-6">{children}</main>
+        <AdminMobileNav />
       </div>
     </div>
   )
@@ -109,19 +110,52 @@ function AdminNavbar({ user }: { user: { name?: string | null } }) {
   }
 
   return (
-    <header className="flex h-14 items-center border-b bg-card px-6">
+    <header className="flex h-14 items-center border-b bg-card px-4 md:px-6">
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-semibold md:hidden">Admin</span>
+      </div>
       <div className="flex-1" />
       <div className="flex items-center gap-4">
-        <span className="text-sm text-muted-foreground">{user.name}</span>
+        <span className="hidden text-sm text-muted-foreground md:inline">{user.name}</span>
         <form action={handleSignOut}>
           <button
             type="submit"
-            className="text-sm text-muted-foreground hover:text-foreground"
+            className="text-xs text-muted-foreground hover:text-foreground md:text-sm"
           >
             Cerrar sesión
           </button>
         </form>
       </div>
     </header>
+  )
+}
+
+const mobileLinks = [
+  { href: "/admin", label: "Dashboard", icon: "LayoutDashboard" },
+  { href: "/admin/productos", label: "Productos", icon: "Package" },
+  { href: "/admin/ventas", label: "Ventas", icon: "ShoppingCart" },
+  { href: "/admin/clientes", label: "Clientes", icon: "Users" },
+  { href: "/", label: "Tienda", icon: "ArrowLeft" },
+]
+
+function AdminMobileNav() {
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-white lg:hidden">
+      <div className="flex items-center justify-around">
+        {mobileLinks.map((link) => {
+          const Icon = sidebarIcons[link.icon] || ArrowLeft
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="flex flex-col items-center gap-0.5 px-2 py-2 text-[10px] text-gray-500 transition-colors hover:text-blue-600"
+            >
+              <Icon className="h-5 w-5" />
+              <span>{link.label}</span>
+            </Link>
+          )
+        })}
+      </div>
+    </nav>
   )
 }

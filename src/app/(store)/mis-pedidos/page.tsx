@@ -26,7 +26,7 @@ export default async function MyOrdersPage({ searchParams }: Props) {
           <p className="mt-2 text-muted-foreground">Ingresa tu número de teléfono para consultar tus pedidos.</p>
         </div>
 
-        <form className="mt-8 flex gap-3" method="GET">
+        <form className="mt-8 flex flex-col gap-3 sm:flex-row" method="GET">
           <input
             name="phone"
             type="tel"
@@ -36,7 +36,7 @@ export default async function MyOrdersPage({ searchParams }: Props) {
           />
           <button
             type="submit"
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+            className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700"
           >
             <Search className="h-4 w-4" />
             Consultar

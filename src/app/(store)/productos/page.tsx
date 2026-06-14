@@ -90,6 +90,34 @@ export default async function StoreProductsPage({ searchParams }: Props) {
             )}
           </div>
 
+          <div className="mb-6 -mx-4 overflow-x-auto px-4 lg:hidden">
+            <div className="flex gap-2">
+              <Link
+                href="/productos"
+                className={`shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium transition-colors ${
+                  !activeCategory
+                    ? "border-blue-600 bg-blue-600 text-white"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-600"
+                }`}
+              >
+                Todas
+              </Link>
+              {categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/productos?categoria=${cat.slug}`}
+                  className={`shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium transition-colors ${
+                    activeCategory?.slug === cat.slug
+                      ? "border-blue-600 bg-blue-600 text-white"
+                      : "border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-600"
+                  }`}
+                >
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((product) => (
               <ProductCard

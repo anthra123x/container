@@ -76,9 +76,9 @@ export default async function CartPage() {
         {cart.items.map((item) => (
           <div
             key={item.id}
-            className="flex items-center gap-4 rounded-xl border bg-white p-4 shadow-sm"
+            className="flex items-start gap-3 rounded-xl border bg-white p-3 shadow-sm md:items-center md:gap-4 md:p-4"
           >
-            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-50">
+            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-50 md:h-20 md:w-20">
               {item.product.images[0] ? (
                 <img
                   src={item.product.images[0].url}

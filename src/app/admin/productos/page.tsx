@@ -36,8 +36,8 @@ export default async function AdminProductsPage() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border">
-        <table className="w-full">
+      <div className="overflow-x-auto rounded-lg border">
+        <table className="w-full min-w-[700px]">
           <thead className="bg-muted/50">
             <tr>
               <th className="px-4 py-3 text-left text-sm font-medium">Producto</th>

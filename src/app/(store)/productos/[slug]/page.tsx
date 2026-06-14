@@ -203,7 +203,7 @@ export default async function ProductDetailPage({ params }: Props) {
             </button>
           </form>
 
-          <div className="mt-8 flex items-center gap-6 rounded-xl bg-gray-50 p-4 text-sm text-gray-500">
+          <div className="mt-8 flex flex-wrap items-center gap-4 rounded-xl bg-gray-50 p-4 text-sm text-gray-500 md:gap-6">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
               <span>24-48h</span>
