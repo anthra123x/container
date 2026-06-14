@@ -6,12 +6,13 @@ import { ProductCard } from "@/components/store/ProductCard"
 export const dynamic = "force-dynamic"
 
 interface Props {
-  searchParams: { [key: string]: string | undefined }
+  searchParams: Promise<{ [key: string]: string | undefined }>
 }
 
 export default async function StoreProductsPage({ searchParams }: Props) {
-  const search = searchParams.q
-  const categorySlug = searchParams.categoria
+  const sp = await searchParams
+  const search = sp.q
+  const categorySlug = sp.categoria
 
   const where: Prisma.ProductWhereInput = { isActive: true }
 
@@ -36,7 +37,7 @@ export default async function StoreProductsPage({ searchParams }: Props) {
       },
       orderBy: { createdAt: "desc" },
     }),
-    prisma.category.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
+    prisma.category.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" } }),
   ])
 
   const activeCategory = categorySlug

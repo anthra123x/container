@@ -2,17 +2,19 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { prisma } from "@/lib/db"
 import { formatCurrency } from "@/lib/utils/formatters"
+import { addToCart } from "@/lib/actions/cart"
 import { Package, Clock, Truck, Shield, ChevronRight } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export default async function ProductDetailPage({ params }: Props) {
+  const { slug } = await params
   const product = await prisma.product.findFirst({
-    where: { slug: params.slug, isActive: true },
+    where: { slug, isActive: true },
     include: {
       images: { orderBy: { sortOrder: "asc" } },
       variants: { orderBy: { sortOrder: "asc" } },
@@ -168,7 +170,8 @@ export default async function ProductDetailPage({ params }: Props) {
             </div>
           </div>
 
-          <form className="mt-8 flex items-center gap-4">
+          <form action={addToCart} className="mt-8 flex items-center gap-4">
+            <input type="hidden" name="productId" value={product.id} />
             <div className="flex items-center rounded-xl border border-gray-200 bg-white shadow-sm">
               <button
                 type="button"
@@ -178,10 +181,10 @@ export default async function ProductDetailPage({ params }: Props) {
               </button>
               <input
                 type="number"
+                name="quantity"
                 min={1}
                 max={product.stock}
                 defaultValue={1}
-                readOnly
                 className="h-10 w-14 border-x border-gray-200 bg-transparent text-center text-sm font-medium [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               />
               <button
