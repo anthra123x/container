@@ -41,15 +41,61 @@ export async function addToCart(formData: FormData) {
   })
 
   if (existing) {
+    const newQty = Math.min(existing.quantity + quantity, product.stock)
     await prisma.cartItem.update({
       where: { id: existing.id },
-      data: { quantity: existing.quantity + quantity },
+      data: { quantity: newQty },
     })
   } else {
     await prisma.cartItem.create({
-      data: { cartId: cart.id, productId, quantity },
+      data: { cartId: cart.id, productId, quantity: Math.min(quantity, product.stock) },
     })
   }
+
+  revalidatePath("/carrito")
+}
+
+export async function removeFromCart(formData: FormData) {
+  const itemId = formData.get("itemId") as string
+  if (!itemId) return
+
+  const cookieStore = await cookies()
+  const sessionId = cookieStore.get("cart_session")?.value
+  if (!sessionId) return
+
+  const cart = await prisma.cart.findFirst({ where: { sessionId } })
+  if (!cart) return
+
+  await prisma.cartItem.deleteMany({
+    where: { id: itemId, cartId: cart.id },
+  })
+
+  revalidatePath("/carrito")
+}
+
+export async function updateCartQuantity(formData: FormData) {
+  const itemId = formData.get("itemId") as string
+  const quantity = parseInt(formData.get("quantity") as string) || 1
+
+  if (!itemId || quantity < 1) return
+
+  const cookieStore = await cookies()
+  const sessionId = cookieStore.get("cart_session")?.value
+  if (!sessionId) return
+
+  const cart = await prisma.cart.findFirst({ where: { sessionId } })
+  if (!cart) return
+
+  const item = await prisma.cartItem.findFirst({
+    where: { id: itemId, cartId: cart.id },
+    include: { product: { select: { stock: true } } },
+  })
+  if (!item) return
+
+  await prisma.cartItem.update({
+    where: { id: itemId },
+    data: { quantity: Math.min(quantity, item.product.stock) },
+  })
 
   revalidatePath("/carrito")
 }

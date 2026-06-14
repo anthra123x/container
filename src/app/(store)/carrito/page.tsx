@@ -2,7 +2,8 @@ import Link from "next/link"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/db"
 import { formatCurrency } from "@/lib/utils/formatters"
-import { ShoppingBag, Trash2 } from "lucide-react"
+import { ShoppingBag, Trash2, Minus, Plus } from "lucide-react"
+import { removeFromCart, updateCartQuantity } from "@/lib/actions/cart"
 
 export const dynamic = "force-dynamic"
 
@@ -98,15 +99,50 @@ export default async function CartPage() {
                 {item.product.name}
               </Link>
               <p className="mt-0.5 text-sm text-gray-500">
-                Cantidad: {item.quantity}
+                {formatCurrency(item.product.price)} c/u
               </p>
-              <p className="text-sm font-medium text-blue-600">
+              <div className="mt-2 flex items-center gap-2">
+                <form action={updateCartQuantity} className="flex items-center">
+                  <input type="hidden" name="itemId" value={item.id} />
+                  <button
+                    type="submit"
+                    name="quantity"
+                    value={item.quantity - 1}
+                    disabled={item.quantity <= 1}
+                    className="flex h-8 w-8 items-center justify-center rounded-l-lg border text-gray-500 transition-colors hover:bg-gray-50 hover:text-blue-600 disabled:opacity-40"
+                  >
+                    <Minus className="h-3 w-3" />
+                  </button>
+                  <span className="flex h-8 w-10 items-center justify-center border-t border-b text-sm font-medium">
+                    {item.quantity}
+                  </span>
+                  <button
+                    type="submit"
+                    name="quantity"
+                    value={item.quantity + 1}
+                    disabled={item.quantity >= item.product.stock}
+                    className="flex h-8 w-8 items-center justify-center rounded-r-lg border text-gray-500 transition-colors hover:bg-gray-50 hover:text-blue-600 disabled:opacity-40"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </button>
+                </form>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="font-medium text-blue-600">
                 {formatCurrency(Number(item.product.price) * item.quantity)}
               </p>
+              <form action={removeFromCart} className="mt-2">
+                <input type="hidden" name="itemId" value={item.id} />
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-1 text-xs text-red-500 transition-colors hover:text-red-700"
+                >
+                  <Trash2 className="h-3 w-3" />
+                  Eliminar
+                </button>
+              </form>
             </div>
-            <button className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600">
-              <Trash2 className="h-4 w-4" />
-            </button>
           </div>
         ))}
       </div>

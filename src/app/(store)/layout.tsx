@@ -10,7 +10,7 @@ import { useCart } from "@/hooks/use-cart"
 const navLinks = [
   { href: "/productos", label: "Productos" },
   { href: "/promociones", label: "Promociones" },
-  { href: "/categorias", label: "Categorías" },
+  { href: "/mis-pedidos", label: "Mis pedidos" },
   { href: "/contacto", label: "Contacto" },
 ]
 
@@ -202,6 +202,7 @@ function StoreFooter() {
           <div>
             <h4 className="mb-4 text-sm font-semibold tracking-wide text-gray-900">Ayuda</h4>
             <ul className="space-y-3 text-sm text-gray-500">
+              <li><Link href="/mis-pedidos" className="transition-colors hover:text-blue-600">Mis pedidos</Link></li>
               <li><Link href="/contacto" className="transition-colors hover:text-blue-600">Contacto</Link></li>
               <li><Link href="/envio" className="transition-colors hover:text-blue-600">Envíos</Link></li>
               <li><Link href="/devoluciones" className="transition-colors hover:text-blue-600">Devoluciones</Link></li>
