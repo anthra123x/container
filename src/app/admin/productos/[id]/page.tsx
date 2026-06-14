@@ -2,6 +2,8 @@ import { prisma } from "@/lib/db"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
 import { auth } from "@/lib/auth"
+import { Package } from "lucide-react"
+import { uploadProductImages } from "@/lib/actions/product-images"
 
 export const dynamic = "force-dynamic"
 
@@ -10,7 +12,11 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
 
   const product = await prisma.product.findUnique({
     where: { id },
-    include: { category: true, brand: true },
+    include: {
+      category: true,
+      brand: true,
+      images: { orderBy: { sortOrder: "asc" } },
+    },
   })
 
   if (!product) notFound()
@@ -60,6 +66,8 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
             isActive,
           },
         })
+
+        await uploadProductImages(id, formData)
 
         redirect("/admin/productos")
       }} className="space-y-6">
@@ -112,6 +120,43 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
             <label className="block text-sm font-medium mb-1">Descripción</label>
             <textarea name="description" defaultValue={product.description ?? ""} rows={8} className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
+        </div>
+        <div className="rounded-lg border p-6">
+          <h2 className="mb-4 text-lg font-semibold">Imágenes</h2>
+          {product.images.length > 0 ? (
+            <div className="mb-4 flex flex-wrap gap-3">
+              {product.images.map((img) => (
+                <div
+                  key={img.id}
+                  className="group relative h-24 w-24 overflow-hidden rounded-lg border bg-gray-50"
+                >
+                  <img
+                    src={img.url}
+                    alt={img.alt ?? ""}
+                    className="h-full w-full object-cover"
+                  />
+                  {img.isPrimary && (
+                    <span className="absolute bottom-1 left-1 rounded-md bg-blue-600 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                      Principal
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mb-4 flex items-center gap-3 rounded-lg bg-gray-50 p-4 text-sm text-gray-500">
+              <Package className="h-5 w-5" />
+              <span>Este producto no tiene imágenes. Agrega una a continuación.</span>
+            </div>
+          )}
+          <input
+            type="file"
+            name="images"
+            multiple
+            accept="image/jpeg,image/png,image/webp"
+            className="block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-700 hover:file:bg-blue-100"
+          />
+          <p className="mt-2 text-xs text-gray-400">JPEG, PNG o WebP. Máximo 5MB por imagen.</p>
         </div>
         <div className="flex gap-3">
           <button type="submit" className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-blue-700">

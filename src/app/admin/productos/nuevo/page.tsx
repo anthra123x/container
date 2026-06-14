@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { auth } from "@/lib/auth"
+import { uploadProductImages } from "@/lib/actions/product-images"
 
 export const dynamic = "force-dynamic"
 
@@ -36,7 +37,7 @@ export default async function NewProductPage() {
 
         if (!categoryId) redirect("/admin/productos/nuevo")
 
-        await prisma.product.create({
+        const product = await prisma.product.create({
           data: {
             name,
             slug,
@@ -50,6 +51,8 @@ export default async function NewProductPage() {
             isActive: true,
           },
         })
+
+        await uploadProductImages(product.id, formData)
 
         redirect("/admin/productos")
       }} className="space-y-6">
@@ -98,6 +101,17 @@ export default async function NewProductPage() {
             <label className="block text-sm font-medium mb-1">Descripción</label>
             <textarea name="description" rows={8} className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
+        </div>
+        <div className="rounded-lg border p-6">
+          <h2 className="mb-4 text-lg font-semibold">Imágenes</h2>
+          <input
+            type="file"
+            name="images"
+            multiple
+            accept="image/jpeg,image/png,image/webp"
+            className="block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-700 hover:file:bg-blue-100"
+          />
+          <p className="mt-2 text-xs text-gray-400">JPEG, PNG o WebP. Máximo 5MB por imagen.</p>
         </div>
         <div className="flex gap-3">
           <button type="submit" className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-blue-700">
