@@ -2,8 +2,9 @@ import { prisma } from "@/lib/db"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
 import { auth } from "@/lib/auth"
-import { Package } from "lucide-react"
-import { uploadProductImages } from "@/lib/actions/product-images"
+import { Package, ArrowUp, ArrowDown, Star, Trash2 } from "lucide-react"
+import { uploadProductImages, deleteProductImage, setPrimaryImage, reorderImages } from "@/lib/actions/product-images"
+import { ImagePreview } from "@/components/admin/ImagePreview"
 
 export const dynamic = "force-dynamic"
 
@@ -121,43 +122,88 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
             <textarea name="description" defaultValue={product.description ?? ""} rows={8} className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
+
         <div className="rounded-lg border p-6">
-          <h2 className="mb-4 text-lg font-semibold">Imágenes</h2>
+          <h2 className="mb-4 text-lg font-semibold">Imágenes actuales</h2>
           {product.images.length > 0 ? (
-            <div className="mb-4 flex flex-wrap gap-3">
-              {product.images.map((img) => (
-                <div
-                  key={img.id}
-                  className="group relative h-24 w-24 overflow-hidden rounded-lg border bg-gray-50"
-                >
-                  <img
-                    src={img.url}
-                    alt={img.alt ?? ""}
-                    className="h-full w-full object-cover"
-                  />
-                  {img.isPrimary && (
-                    <span className="absolute bottom-1 left-1 rounded-md bg-blue-600 px-1.5 py-0.5 text-[10px] font-medium text-white">
-                      Principal
-                    </span>
-                  )}
+            <div className="mb-4 flex flex-wrap gap-4">
+              {product.images.map((img, i) => (
+                <div key={img.id} className="w-36">
+                  <div className="relative mb-1.5 aspect-square overflow-hidden rounded-lg border bg-gray-50">
+                    <img
+                      src={img.url}
+                      alt={img.alt ?? ""}
+                      className="h-full w-full object-cover"
+                    />
+                    {img.isPrimary && (
+                      <div className="absolute bottom-1 left-1 rounded-md bg-blue-600 px-1.5 py-0.5 text-[10px] font-medium text-white shadow">
+                        Principal
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-center gap-1">
+                    <form action={reorderImages} className="inline">
+                      <input type="hidden" name="productId" value={product.id} />
+                      <input type="hidden" name="imageId" value={img.id} />
+                      <input type="hidden" name="direction" value="up" />
+                      <button
+                        type="submit"
+                        disabled={i === 0}
+                        className="rounded p-0.5 text-gray-400 transition-colors hover:text-blue-600 disabled:opacity-30"
+                      >
+                        <ArrowUp className="h-3.5 w-3.5" />
+                      </button>
+                    </form>
+                    <form action={reorderImages} className="inline">
+                      <input type="hidden" name="productId" value={product.id} />
+                      <input type="hidden" name="imageId" value={img.id} />
+                      <input type="hidden" name="direction" value="down" />
+                      <button
+                        type="submit"
+                        disabled={i === product.images.length - 1}
+                        className="rounded p-0.5 text-gray-400 transition-colors hover:text-blue-600 disabled:opacity-30"
+                      >
+                        <ArrowDown className="h-3.5 w-3.5" />
+                      </button>
+                    </form>
+                    {!img.isPrimary && (
+                      <form action={setPrimaryImage} className="inline">
+                        <input type="hidden" name="imageId" value={img.id} />
+                        <button
+                          type="submit"
+                          className="rounded p-0.5 text-gray-400 transition-colors hover:text-yellow-500"
+                          title="Marcar como principal"
+                        >
+                          <Star className="h-3.5 w-3.5" />
+                        </button>
+                      </form>
+                    )}
+                    <form action={deleteProductImage} className="inline">
+                      <input type="hidden" name="imageId" value={img.id} />
+                      <button
+                        type="submit"
+                        onClick={(e) => { if (!confirm("¿Eliminar esta imagen?")) e.preventDefault() }}
+                        className="rounded p-0.5 text-gray-400 transition-colors hover:text-red-600"
+                        title="Eliminar"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </form>
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="mb-4 flex items-center gap-3 rounded-lg bg-gray-50 p-4 text-sm text-gray-500">
               <Package className="h-5 w-5" />
-              <span>Este producto no tiene imágenes. Agrega una a continuación.</span>
+              <span>Este producto no tiene imágenes.</span>
             </div>
           )}
-          <input
-            type="file"
-            name="images"
-            multiple
-            accept="image/jpeg,image/png,image/webp"
-            className="block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-700 hover:file:bg-blue-100"
-          />
-          <p className="mt-2 text-xs text-gray-400">JPEG, PNG o WebP. Máximo 5MB por imagen.</p>
+
+          <h3 className="mb-3 text-sm font-medium text-gray-700">Agregar nuevas imágenes</h3>
+          <ImagePreview />
         </div>
+
         <div className="flex gap-3">
           <button type="submit" className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-blue-700">
             Guardar cambios

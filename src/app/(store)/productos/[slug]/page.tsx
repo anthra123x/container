@@ -3,7 +3,8 @@ import Link from "next/link"
 import { prisma } from "@/lib/db"
 import { formatCurrency } from "@/lib/utils/formatters"
 import { addToCart } from "@/lib/actions/cart"
-import { Package, Clock, Truck, Shield, ChevronRight } from "lucide-react"
+import { Clock, Truck, Shield, ChevronRight } from "lucide-react"
+import { ProductGallery } from "@/components/store/ProductGallery"
 
 export const dynamic = "force-dynamic"
 
@@ -53,48 +54,27 @@ export default async function ProductDetailPage({ params }: Props) {
       </nav>
 
       <div className="grid gap-8 lg:grid-cols-2">
-        <div>
-          <div className="relative aspect-square overflow-hidden rounded-2xl bg-gray-50 shadow-sm ring-1 ring-gray-100">
-            {product.images[0] ? (
-              <img
-                src={product.images[0].url}
-                alt={product.images[0].alt ?? product.name}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center">
-                <Package className="h-20 w-20 text-gray-200" />
-              </div>
-            )}
-            {hasDiscount && (
-              <div className="absolute left-4 top-4 rounded-full bg-red-500 px-3 py-1.5 text-sm font-bold text-white shadow-lg">
-                -{discountPercentage}%
-              </div>
-            )}
-            {isOutOfStock && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[1px]">
-                <span className="rounded-xl bg-white/95 px-6 py-3 text-base font-semibold text-gray-900 shadow-xl">
-                  Agotado
-                </span>
-              </div>
-            )}
-          </div>
-          {product.images.length > 1 && (
-            <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
-              {product.images.map((img, i) => (
-                <div
-                  key={img.id}
-                  className={`h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-gray-50 ring-1 transition ${
-                    i === 0 ? "ring-2 ring-blue-500" : "ring-gray-200 hover:ring-blue-300"
-                  }`}
-                >
-                  <img
-                    src={img.url}
-                    alt={img.alt ?? ""}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ))}
+        <div className="relative">
+          <ProductGallery
+            images={
+              product.images.length > 0
+                ? product.images.map((img) => ({
+                    url: img.url,
+                    alt: img.alt ?? product.name,
+                  }))
+                : [{ url: "", alt: product.name }]
+            }
+          />
+          {hasDiscount && (
+            <div className="absolute left-4 top-4 z-10 rounded-full bg-red-500 px-3 py-1.5 text-sm font-bold text-white shadow-lg">
+              -{discountPercentage}%
+            </div>
+          )}
+          {isOutOfStock && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30 backdrop-blur-[1px]">
+              <span className="rounded-xl bg-white/95 px-6 py-3 text-base font-semibold text-gray-900 shadow-xl">
+                Agotado
+              </span>
             </div>
           )}
         </div>
