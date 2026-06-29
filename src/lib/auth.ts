@@ -65,10 +65,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   pages: {
-    signIn: "/login",
+    signIn: "/admin/login",
   },
   session: {
     strategy: "jwt",
-    maxAge: 8 * 60 * 60,
+    maxAge: 24 * 60 * 60,
   },
 })

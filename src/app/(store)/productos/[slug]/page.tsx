@@ -1,15 +1,44 @@
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { prisma } from "@/lib/db"
 import { formatCurrency } from "@/lib/utils/formatters"
-import { addToCart } from "@/lib/actions/cart"
 import { Clock, Truck, Shield, ChevronRight } from "lucide-react"
 import { ProductGallery } from "@/components/store/ProductGallery"
+import { ProductActions } from "@/components/store/ProductActions"
 
 export const dynamic = "force-dynamic"
 
 interface Props {
   params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const product = await prisma.product.findFirst({
+    where: { slug, isActive: true },
+    select: {
+      name: true,
+      description: true,
+      metaTitle: true,
+      metaDescription: true,
+      images: { where: { isPrimary: true }, take: 1 },
+    },
+  })
+
+  if (!product) {
+    return { title: "Producto no encontrado | Container" }
+  }
+
+  return {
+    title: product.metaTitle ?? `${product.name} | Container`,
+    description: product.metaDescription ?? product.description?.slice(0, 160) ?? `${product.name} en Container`,
+    openGraph: {
+      title: product.metaTitle ?? product.name,
+      description: product.metaDescription ?? product.description?.slice(0, 160),
+      images: product.images[0] ? [{ url: product.images[0].url }] : [],
+    },
+  }
 }
 
 export default async function ProductDetailPage({ params }: Props) {
@@ -34,8 +63,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
   if (!product) notFound()
 
-  const hasDiscount =
-    product.comparePrice && Number(product.comparePrice) > Number(product.price)
+  const hasDiscount = !!product.comparePrice && Number(product.comparePrice) > Number(product.price)
   const discountPercentage = hasDiscount
     ? Math.round((1 - Number(product.price) / Number(product.comparePrice)) * 100)
     : 0
@@ -117,71 +145,25 @@ export default async function ProductDetailPage({ params }: Props) {
             <p className="mt-4 leading-relaxed text-gray-600">{product.shortDescription}</p>
           )}
 
-          <div className="mt-6 space-y-3">
-            <div className="flex items-center gap-2 text-sm">
-              {isOutOfStock ? (
-                <>
-                  <span className="flex h-2.5 w-2.5 rounded-full bg-red-500" />
-                  <span className="font-medium text-red-600">Agotado</span>
-                </>
-              ) : product.stock <= 5 ? (
-                <>
-                  <span className="flex h-2.5 w-2.5 rounded-full bg-amber-500" />
-                  <span className="font-medium text-amber-600">
-                    Solo quedan {product.stock} unidad{product.stock !== 1 ? "es" : ""}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span className="flex h-2.5 w-2.5 rounded-full bg-green-500" />
-                  <span className="font-medium text-green-600">
-                    {product.stock} en stock
-                  </span>
-                </>
-              )}
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Truck className="h-4 w-4" />
-              <span>Envío rápido a todo Colombia</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Shield className="h-4 w-4" />
-              <span>Producto original con garantía</span>
-            </div>
-          </div>
-
-          <form action={addToCart} className="mt-8 flex items-center gap-4">
-            <input type="hidden" name="productId" value={product.id} />
-            <div className="flex items-center rounded-xl border border-gray-200 bg-white shadow-sm">
-              <button
-                type="button"
-                className="flex h-10 w-10 items-center justify-center text-gray-500 transition-colors hover:text-blue-600"
-              >
-                -
-              </button>
-              <input
-                type="number"
-                name="quantity"
-                min={1}
-                max={product.stock}
-                defaultValue={1}
-                className="h-10 w-14 border-x border-gray-200 bg-transparent text-center text-sm font-medium [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              />
-              <button
-                type="button"
-                className="flex h-10 w-10 items-center justify-center text-gray-500 transition-colors hover:text-blue-600"
-              >
-                +
-              </button>
-            </div>
-            <button
-              type="submit"
-              disabled={isOutOfStock}
-              className="flex-1 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 font-medium text-white shadow-sm transition-all hover:from-blue-700 hover:to-blue-800 hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isOutOfStock ? "Agotado" : "Agregar al carrito"}
-            </button>
-          </form>
+          <ProductActions
+            productId={product.id}
+            name={product.name}
+            slug={product.slug}
+            price={Number(product.price)}
+            baseStock={product.stock}
+            variants={product.variants.map((v) => ({
+              id: v.id,
+              name: v.value,
+              type: v.type,
+              value: v.value,
+              price: v.price?.toString() ?? null,
+              stock: v.stock ?? null,
+              image: v.image,
+            }))}
+            hasDiscount={hasDiscount}
+            comparePrice={product.comparePrice ? Number(product.comparePrice) : null}
+            discountPercentage={discountPercentage}
+          />
 
           <div className="mt-8 flex flex-wrap items-center gap-4 rounded-xl bg-gray-50 p-4 text-sm text-gray-500 md:gap-6">
             <div className="flex items-center gap-2">

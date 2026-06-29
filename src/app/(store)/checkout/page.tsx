@@ -37,6 +37,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
       items: {
         include: {
           product: { select: { id: true, name: true, slug: true, price: true, stock: true, images: { where: { isPrimary: true }, take: 1 } } },
+          variant: { select: { id: true, name: true, value: true, price: true, stock: true } },
         },
         orderBy: { createdAt: "desc" },
       },
@@ -58,10 +59,10 @@ export default async function CheckoutPage({ searchParams }: Props) {
     )
   }
 
-  const total = cart.items.reduce(
-    (sum, item) => sum + Number(item.product.price) * item.quantity,
-    0
-  )
+  const total = cart.items.reduce((sum, item) => {
+    const unitPrice = item.variant?.price ? Number(item.variant.price) : Number(item.product.price)
+    return sum + unitPrice * item.quantity
+  }, 0)
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
@@ -216,10 +217,11 @@ export default async function CheckoutPage({ searchParams }: Props) {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-gray-900 truncate">{item.product.name}</p>
-                    <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                    {item.variant && <p className="text-xs text-gray-500">{item.variant.name}</p>}
+                    <p className="text-xs text-gray-500">Cant: {item.quantity}</p>
                   </div>
                   <p className="text-sm font-medium">
-                    {formatCurrency(Number(item.product.price) * item.quantity)}
+                    {formatCurrency((item.variant?.price ? Number(item.variant.price) : Number(item.product.price)) * item.quantity)}
                   </p>
                 </div>
               ))}

@@ -24,7 +24,12 @@ export default async function AdminLayout({
   const session = await auth()
 
   if (!session?.user) {
-    redirect("/login")
+    return <div className="flex min-h-screen items-center justify-center">{children}</div>
+  }
+
+  const role = session.user.role as string
+  if (getRoleLevel(role) < 1) {
+    redirect("/")
   }
 
   return (
@@ -106,7 +111,7 @@ function AdminSidebar({ userRole }: { userRole: string }) {
 function AdminNavbar({ user }: { user: { name?: string | null } }) {
   async function handleSignOut() {
     "use server"
-    await signOut({ redirectTo: "/login" })
+    await signOut({ redirectTo: "/admin/login" })
   }
 
   return (

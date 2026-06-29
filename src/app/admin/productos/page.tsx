@@ -2,22 +2,53 @@ import Link from "next/link"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { formatCurrency } from "@/lib/utils/formatters"
+import { SearchBar } from "@/components/admin/SearchBar"
+import { Pagination } from "@/components/admin/Pagination"
+import type { Prisma } from "@prisma/client"
 
 export const dynamic = "force-dynamic"
+const PAGE_SIZE = 15
 
-export default async function AdminProductsPage() {
+interface Props {
+  searchParams: Promise<{ [key: string]: string | undefined }>
+}
+
+export default async function AdminProductsPage({ searchParams }: Props) {
+  const sp = await searchParams
   const session = await auth()
-  const products = await prisma.product.findMany({
-    where: { storeId: session?.user?.storeId ?? "" },
-    include: {
-      category: true,
-      images: { where: { isPrimary: true }, take: 1 },
-      _count: { select: { orderItems: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  })
+  const storeId = session?.user?.storeId ?? ""
+  const page = Math.max(1, parseInt(sp.page ?? "1"))
+  const search = sp.q
 
-  const totalValue = products.reduce((sum, p) => sum + Number(p.price) * p.stock, 0)
+  const where: Prisma.ProductWhereInput = { storeId }
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { sku: { contains: search, mode: "insensitive" } },
+    ]
+  }
+
+  const [products, total, allProducts] = await Promise.all([
+    prisma.product.findMany({
+      where,
+      include: {
+        category: true,
+        images: { where: { isPrimary: true }, take: 1 },
+        _count: { select: { orderItems: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.product.count({ where }),
+    prisma.product.findMany({
+      where: { storeId },
+      select: { price: true, stock: true },
+    }),
+  ])
+
+  const totalValue = allProducts.reduce((sum, p) => sum + Number(p.price) * p.stock, 0)
 
   return (
     <div className="space-y-6">
@@ -34,6 +65,15 @@ export default async function AdminProductsPage() {
             Nuevo Producto
           </Link>
         </div>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <SearchBar placeholder="Buscar por nombre o SKU..." />
+        {search && (
+          <Link href="/admin/productos" className="text-sm text-muted-foreground hover:text-foreground">
+            Limpiar filtro
+          </Link>
+        )}
       </div>
 
       <div className="overflow-x-auto rounded-lg border">
@@ -116,6 +156,7 @@ export default async function AdminProductsPage() {
             })}
           </tbody>
         </table>
+        <Pagination total={total} page={page} pageSize={PAGE_SIZE} />
       </div>
 
       {products.length === 0 && (

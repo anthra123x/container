@@ -39,6 +39,7 @@ export default async function CartPage() {
               images: { where: { isPrimary: true }, take: 1 },
             },
           },
+          variant: { select: { id: true, name: true, value: true, price: true, stock: true, type: true } },
         },
         orderBy: { createdAt: "desc" },
       },
@@ -63,10 +64,10 @@ export default async function CartPage() {
     )
   }
 
-  const total = cart.items.reduce(
-    (sum, item) => sum + Number(item.product.price) * item.quantity,
-    0
-  )
+  const total = cart.items.reduce((sum, item) => {
+    const unitPrice = item.variant?.price ? Number(item.variant.price) : Number(item.product.price)
+    return sum + unitPrice * item.quantity
+  }, 0)
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
@@ -98,8 +99,11 @@ export default async function CartPage() {
               >
                 {item.product.name}
               </Link>
+              {item.variant && (
+                <p className="text-xs text-gray-500">{item.variant.name}</p>
+              )}
               <p className="mt-0.5 text-sm text-gray-500">
-                {formatCurrency(item.product.price)} c/u
+                {formatCurrency(item.variant?.price ? Number(item.variant.price) : Number(item.product.price))} c/u
               </p>
               <div className="mt-2 flex items-center gap-2">
                 <form action={updateCartQuantity} className="flex items-center">
@@ -120,7 +124,7 @@ export default async function CartPage() {
                     type="submit"
                     name="quantity"
                     value={item.quantity + 1}
-                    disabled={item.quantity >= item.product.stock}
+                    disabled={item.quantity >= (item.variant?.stock ?? item.product.stock)}
                     className="flex h-8 w-8 items-center justify-center rounded-r-lg border text-gray-500 transition-colors hover:bg-gray-50 hover:text-blue-600 disabled:opacity-40"
                   >
                     <Plus className="h-3 w-3" />
@@ -130,7 +134,7 @@ export default async function CartPage() {
             </div>
             <div className="text-right">
               <p className="font-medium text-blue-600">
-                {formatCurrency(Number(item.product.price) * item.quantity)}
+                {formatCurrency((item.variant?.price ? Number(item.variant.price) : Number(item.product.price)) * item.quantity)}
               </p>
               <form action={removeFromCart} className="mt-2">
                 <input type="hidden" name="itemId" value={item.id} />

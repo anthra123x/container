@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache"
 
 export async function addToCart(formData: FormData) {
   const productId = formData.get("productId") as string
+  const variantId = (formData.get("variantId") as string) || null
   const quantity = parseInt(formData.get("quantity") as string) || 1
 
   if (!productId) return
@@ -26,7 +27,21 @@ export async function addToCart(formData: FormData) {
     select: { storeId: true, stock: true },
   })
 
-  if (!product || product.stock < 1) return
+  if (!product) return
+
+  let maxStock = product.stock
+
+  if (variantId) {
+    const variant = await prisma.productVariant.findUnique({
+      where: { id: variantId },
+      select: { stock: true },
+    })
+    if (variant && variant.stock !== null) {
+      maxStock = variant.stock
+    }
+  }
+
+  if (maxStock < 1) return
 
   let cart = await prisma.cart.findFirst({ where: { sessionId } })
 
@@ -37,18 +52,23 @@ export async function addToCart(formData: FormData) {
   }
 
   const existing = await prisma.cartItem.findFirst({
-    where: { cartId: cart.id, productId, variantId: null },
+    where: { cartId: cart.id, productId, variantId },
   })
 
   if (existing) {
-    const newQty = Math.min(existing.quantity + quantity, product.stock)
+    const newQty = Math.min(existing.quantity + quantity, maxStock)
     await prisma.cartItem.update({
       where: { id: existing.id },
       data: { quantity: newQty },
     })
   } else {
     await prisma.cartItem.create({
-      data: { cartId: cart.id, productId, quantity: Math.min(quantity, product.stock) },
+      data: {
+        cartId: cart.id,
+        productId,
+        variantId,
+        quantity: Math.min(quantity, maxStock),
+      },
     })
   }
 

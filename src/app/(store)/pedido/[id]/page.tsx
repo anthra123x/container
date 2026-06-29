@@ -78,6 +78,9 @@ export default async function OrderConfirmationPage({ params }: Props) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-gray-900">{item.productName}</p>
+                  {item.variantName && (
+                    <p className="text-xs text-gray-500">{item.variantName}</p>
+                  )}
                   <p className="text-xs text-gray-500">Qty: {item.quantity} x {formatCurrency(item.unitPrice)}</p>
                 </div>
                 <p className="text-sm font-medium">{formatCurrency(item.subtotal)}</p>

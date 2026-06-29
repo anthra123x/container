@@ -17,6 +17,7 @@ export async function createOrder(formData: FormData) {
       items: {
         include: {
           product: { select: { id: true, name: true, sku: true, price: true, stock: true, storeId: true } },
+          variant: { select: { id: true, name: true, value: true, price: true, stock: true } },
         },
       },
     },
@@ -43,16 +44,17 @@ export async function createOrder(formData: FormData) {
   }
 
   const data = parsed.data
-  const subtotal = cart.items.reduce(
-    (sum, item) => sum + Number(item.product.price) * item.quantity,
-    0
-  )
+  const subtotal = cart.items.reduce((sum, item) => {
+    const unitPrice = item.variant?.price ? Number(item.variant.price) : Number(item.product.price)
+    return sum + unitPrice * item.quantity
+  }, 0)
   const total = subtotal
 
   for (const item of cart.items) {
-    if (item.product.stock < item.quantity) {
+    const maxStock = item.variant?.stock ?? item.product.stock
+    if (maxStock < item.quantity) {
       return redirect(
-        `/checkout?error=${encodeURIComponent(`Stock insuficiente para "${item.product.name}". Disponible: ${item.product.stock}`)}`
+        `/checkout?error=${encodeURIComponent(`Stock insuficiente para "${item.product.name}". Disponible: ${maxStock}`)}`
       )
     }
   }
@@ -109,14 +111,18 @@ export async function createOrder(formData: FormData) {
         source: "STORE",
         notes: data.notes || null,
         items: {
-          create: cart.items.map((item) => ({
-            productId: item.product.id,
-            productName: item.product.name,
-            productSku: item.product.sku,
-            quantity: item.quantity,
-            unitPrice: item.product.price,
-            subtotal: Number(item.product.price) * item.quantity,
-          })),
+          create: cart.items.map((item) => {
+            const unitPrice = item.variant?.price ? Number(item.variant.price) : Number(item.product.price)
+            return {
+              productId: item.product.id,
+              productName: item.product.name,
+              productSku: item.product.sku,
+              variantName: item.variant?.name ?? null,
+              quantity: item.quantity,
+              unitPrice,
+              subtotal: unitPrice * item.quantity,
+            }
+          }),
         },
         statusHistory: {
           create: {
@@ -132,6 +138,12 @@ export async function createOrder(formData: FormData) {
         where: { id: item.product.id },
         data: { stock: { decrement: item.quantity } },
       })
+      if (item.variant && item.variant.stock !== null) {
+        await tx.productVariant.update({
+          where: { id: item.variant.id },
+          data: { stock: { decrement: item.quantity } },
+        })
+      }
     }
 
     await tx.cartItem.deleteMany({ where: { cartId: cart.id } })
