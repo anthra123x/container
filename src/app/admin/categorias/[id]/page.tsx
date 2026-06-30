@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
+import { requireAdminRole } from "@/lib/auth-helpers"
 
 export const dynamic = "force-dynamic"
 
@@ -12,6 +13,7 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
 
   async function updateCategory(formData: FormData) {
     "use server"
+    await requireAdminRole(2)
 
     const name = formData.get("name") as string
     const description = formData.get("description") as string

@@ -1,7 +1,15 @@
 import NextAuth from "next-auth"
+import { CredentialsSignin } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { compare } from "bcryptjs"
 import { prisma } from "@/lib/db"
+
+const MAX_LOGIN_ATTEMPTS = 5
+const LOCKOUT_MINUTES = 15
+
+class LockoutError extends CredentialsSignin {
+  code = "LOCKOUT"
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -24,12 +32,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!user || !user.isActive) return null
 
+        if (user.lockoutUntil && user.lockoutUntil > new Date()) {
+          throw new LockoutError()
+        }
+
         const isValid = await compare(password, user.passwordHash)
-        if (!isValid) return null
+        if (!isValid) {
+          const attempts = user.loginAttempts + 1
+          const lockoutUntil =
+            attempts >= MAX_LOGIN_ATTEMPTS
+              ? new Date(Date.now() + LOCKOUT_MINUTES * 60 * 1000)
+              : null
+
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { loginAttempts: attempts, lockoutUntil },
+          })
+
+          return null
+        }
 
         await prisma.user.update({
           where: { id: user.id },
-          data: { lastLoginAt: new Date() },
+          data: { lastLoginAt: new Date(), loginAttempts: 0, lockoutUntil: null },
         })
 
         return {
@@ -48,9 +73,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
-        token.role = (user as any).role
-        token.storeId = (user as any).storeId
-        token.storeName = (user as any).storeName
+        token.role = user.role
+        token.storeId = user.storeId
+        token.storeName = user.storeName
       }
       return token
     },

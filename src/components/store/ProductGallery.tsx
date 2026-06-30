@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useCallback, useEffect, useState } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -14,21 +15,18 @@ export function ProductGallery({ images }: ProductGalleryProps) {
   const [canScrollPrev, setCanScrollPrev] = useState(false)
   const [canScrollNext, setCanScrollNext] = useState(false)
 
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return
-    setSelectedIndex(emblaApi.selectedScrollSnap())
-    setCanScrollPrev(emblaApi.canScrollPrev())
-    setCanScrollNext(emblaApi.canScrollNext())
-  }, [emblaApi])
-
   useEffect(() => {
     if (!emblaApi) return
-    onSelect()
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap())
+      setCanScrollPrev(emblaApi.canScrollPrev())
+      setCanScrollNext(emblaApi.canScrollNext())
+    }
     emblaApi.on("select", onSelect)
     return () => {
       emblaApi.off("select", onSelect)
     }
-  }, [emblaApi, onSelect])
+  }, [emblaApi])
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
@@ -43,10 +41,12 @@ export function ProductGallery({ images }: ProductGalleryProps) {
           <div className="flex h-full">
             {images.map((img, i) => (
               <div key={i} className="relative min-w-0 flex-[0_0_100%]">
-                <img
+                <Image
                   src={img.url}
                   alt={img.alt}
-                  className="h-full w-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
             ))}
@@ -95,16 +95,18 @@ export function ProductGallery({ images }: ProductGalleryProps) {
             <button
               key={i}
               onClick={() => scrollTo(i)}
-              className={`h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-gray-50 ring-1 transition ${
+              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-gray-50 ring-1 transition ${
                 i === selectedIndex
                   ? "ring-2 ring-blue-500"
                   : "ring-gray-200 hover:ring-blue-300"
               }`}
             >
-              <img
+              <Image
                 src={img.url}
                 alt={img.alt}
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
+                sizes="80px"
               />
             </button>
           ))}

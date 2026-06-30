@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
+import { requireAdminRole } from "@/lib/auth-helpers"
 import { getRoleLevel } from "@/lib/validations/user"
 
 export const dynamic = "force-dynamic"
@@ -17,8 +18,7 @@ export default async function AdminConfigPage() {
 
   async function updateConfig(formData: FormData) {
     "use server"
-    const currentSession = await auth()
-    if (!currentSession?.user) redirect("/login")
+    const currentSession = await requireAdminRole(3)
 
     const storeId = currentSession.user.storeId as string
 

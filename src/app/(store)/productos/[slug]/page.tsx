@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { prisma } from "@/lib/db"
-import { formatCurrency } from "@/lib/utils/formatters"
 import { Clock, Truck, Shield, ChevronRight } from "lucide-react"
 import { ProductGallery } from "@/components/store/ProductGallery"
 import { ProductActions } from "@/components/store/ProductActions"
@@ -99,7 +99,7 @@ export default async function ProductDetailPage({ params }: Props) {
             </div>
           )}
           {isOutOfStock && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30 backdrop-blur-[1px]">
+            <div className="overlay-outofstock">
               <span className="rounded-xl bg-white/95 px-6 py-3 text-base font-semibold text-gray-900 shadow-xl">
                 Agotado
               </span>
@@ -122,24 +122,6 @@ export default async function ProductDetailPage({ params }: Props) {
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
             {product.name}
           </h1>
-
-          <div className="mt-6">
-            <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-bold text-blue-600">
-                {formatCurrency(product.price)}
-              </span>
-              {hasDiscount && (
-                <>
-                  <span className="text-lg text-gray-400 line-through">
-                    {formatCurrency(product.comparePrice)}
-                  </span>
-                  <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-600">
-                    -{discountPercentage}%
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
 
           {product.shortDescription && (
             <p className="mt-4 leading-relaxed text-gray-600">{product.shortDescription}</p>
@@ -197,11 +179,13 @@ export default async function ProductDetailPage({ params }: Props) {
                   <h3 className="mb-2 text-sm font-medium text-gray-700">{gallery.name}</h3>
                   <div className="grid grid-cols-3 gap-3">
                     {gallery.images.map((img) => (
-                      <div key={img.id} className="aspect-square overflow-hidden rounded-xl bg-gray-50 ring-1 ring-gray-200">
-                        <img
+                      <div key={img.id} className="relative aspect-square overflow-hidden rounded-xl bg-gray-50 ring-1 ring-gray-200">
+                        <Image
                           src={img.url}
-                          alt={img.alt ?? ""}
-                          className="h-full w-full object-cover"
+                          alt={img.alt ?? product.name}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 33vw, 25vw"
                         />
                       </div>
                     ))}

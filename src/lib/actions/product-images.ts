@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
+import { requireAdminRole } from "@/lib/auth-helpers"
+import { getSupabaseAdmin } from "@/lib/supabase-admin"
 import { supabase, STORAGE_BUCKET } from "@/lib/supabase"
 import { randomUUID } from "crypto"
 
@@ -11,8 +13,7 @@ export async function uploadProductImages(
   productId: string,
   formData: FormData
 ): Promise<void> {
-  const session = await auth()
-  if (!session?.user) redirect("/login")
+  await requireAdminRole(2)
 
   const files = formData.getAll("images") as File[]
 
@@ -40,7 +41,7 @@ export async function uploadProductImages(
     const arrayBuffer = await file.arrayBuffer()
     const buffer = new Uint8Array(arrayBuffer)
 
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError } = await getSupabaseAdmin().storage
       .from(STORAGE_BUCKET)
       .upload(filePath, buffer, {
         contentType: file.type,
@@ -78,8 +79,7 @@ function extractStoragePath(url: string): string | null {
 }
 
 export async function deleteProductImage(formData: FormData) {
-  const session = await auth()
-  if (!session?.user) redirect("/login")
+  await requireAdminRole(2)
 
   const imageId = formData.get("imageId") as string
   if (!imageId) return
@@ -92,7 +92,7 @@ export async function deleteProductImage(formData: FormData) {
 
   const storagePath = extractStoragePath(image.url)
   if (storagePath) {
-    await supabase.storage.from(STORAGE_BUCKET).remove([storagePath])
+    await getSupabaseAdmin().storage.from(STORAGE_BUCKET).remove([storagePath])
   }
 
   await prisma.productImage.delete({ where: { id: imageId } })
@@ -120,8 +120,7 @@ export async function deleteProductImage(formData: FormData) {
 }
 
 export async function setPrimaryImage(formData: FormData) {
-  const session = await auth()
-  if (!session?.user) redirect("/login")
+  await requireAdminRole(2)
 
   const imageId = formData.get("imageId") as string
   if (!imageId) return
@@ -144,8 +143,7 @@ export async function setPrimaryImage(formData: FormData) {
 }
 
 export async function reorderImages(formData: FormData) {
-  const session = await auth()
-  if (!session?.user) redirect("/login")
+  await requireAdminRole(2)
 
   const productId = formData.get("productId") as string
   const imageId = formData.get("imageId") as string

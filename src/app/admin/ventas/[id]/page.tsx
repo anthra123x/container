@@ -1,8 +1,8 @@
-import type { OrderStatus } from "@prisma/client"
+import type { OrderStatus, Prisma } from "@prisma/client"
 import { prisma } from "@/lib/db"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
-import { auth } from "@/lib/auth"
+import { requireAdminRole } from "@/lib/auth-helpers"
 import { formatCurrency, formatDateTime } from "@/lib/utils/formatters"
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "@/lib/constants"
 
@@ -46,8 +46,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
 
   async function updateOrderStatus(formData: FormData) {
     "use server"
-    const currentSession = await auth()
-    if (!currentSession?.user) redirect("/login")
+    const session = await requireAdminRole(2)
 
     const newStatus = formData.get("status") as string
     const note = formData.get("note") as string
@@ -61,7 +60,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
     const timestampFields: Record<string, Date> = {}
     if (newStatus === "DELIVERED") timestampFields.deliveredAt = new Date()
 
-    const transactions: any[] = [
+    const transactions: Prisma.PrismaPromise<unknown>[] = [
       prisma.order.update({
         where: { id },
         data: {
@@ -73,7 +72,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         data: {
           orderId: id,
           status: newStatus as OrderStatus,
-          changedBy: currentSession.user.id,
+          changedBy: session.user.id,
           note: note || null,
         },
       }),

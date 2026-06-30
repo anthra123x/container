@@ -212,7 +212,7 @@ export function ProductActions({
         <button
           type="submit"
           disabled={isOutOfStock || (hasVariants && !selectedVariantId) || pending}
-          className="flex-1 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 font-medium text-white shadow-sm transition-all hover:from-blue-700 hover:to-blue-800 hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary"
         >
           {pending ? "Agregando..." : isOutOfStock ? "Agotado" : "Agregar al carrito"}
         </button>

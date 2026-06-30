@@ -3,6 +3,7 @@ import Link from "next/link"
 import type { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
+import { requireAdminRole } from "@/lib/auth-helpers"
 import { hash } from "bcryptjs"
 import { updateUserSchema, ROLES_CONFIG, getRoleLevel } from "@/lib/validations/user"
 
@@ -69,8 +70,7 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
       redirect(`/admin/usuarios/${userId}?${params.toString()}`)
     }
 
-    const currentUser = await auth()
-    if (!currentUser?.user) redirect("/login")
+    const currentUser = await requireAdminRole(3)
 
     const currRole = currentUser.user.role as string
     const currLevel = getRoleLevel(currRole)

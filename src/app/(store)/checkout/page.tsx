@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/db"
@@ -23,7 +24,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
         <p className="mt-2 text-muted-foreground">Agrega productos antes de finalizar tu compra.</p>
         <Link
           href="/productos"
-          className="mt-6 inline-flex items-center rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
+          className="btn-primary mt-6"
         >
           Ver productos
         </Link>
@@ -51,7 +52,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
         <p className="mt-2 text-muted-foreground">Agrega productos antes de finalizar tu compra.</p>
         <Link
           href="/productos"
-          className="mt-6 inline-flex items-center rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
+          className="btn-primary mt-6"
         >
           Ver productos
         </Link>
@@ -91,7 +92,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
                   <input
                     name="customerName"
                     required
-                    className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-blue-500"
+                    className="input-field"
                     placeholder="Ej: Juan Pérez"
                   />
                 </div>
@@ -105,7 +106,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
                       name="customerPhone"
                       type="tel"
                       required
-                      className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-blue-500"
+                      className="input-field"
                       placeholder="+57 300 123 4567"
                     />
                     <p className="mt-1 text-xs text-gray-400">Te contactaremos por WhatsApp</p>
@@ -117,7 +118,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
                     <input
                       name="customerEmail"
                       type="email"
-                      className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-blue-500"
+                      className="input-field"
                       placeholder="correo@ejemplo.com"
                     />
                   </div>
@@ -136,7 +137,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
                   <input
                     name="shippingAddress"
                     required
-                    className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-blue-500"
+                    className="input-field"
                     placeholder="Cra 1 #2-3, Barrio Centro"
                   />
                 </div>
@@ -149,7 +150,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
                     <input
                       name="shippingCity"
                       required
-                      className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-blue-500"
+                      className="input-field"
                       placeholder="El Banco"
                     />
                   </div>
@@ -159,7 +160,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
                     </label>
                     <input
                       name="shippingState"
-                      className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-blue-500"
+                      className="input-field"
                       placeholder="Magdalena"
                     />
                   </div>
@@ -169,7 +170,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
                     </label>
                     <input
                       name="shippingZip"
-                      className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-blue-500"
+                      className="input-field"
                     />
                   </div>
                 </div>
@@ -181,14 +182,14 @@ export default async function CheckoutPage({ searchParams }: Props) {
               <textarea
                 name="notes"
                 rows={3}
-                className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-blue-500"
+                className="input-field"
                 placeholder="¿Alguna indicación especial? (opcional)"
               />
             </div>
 
             <button
               type="submit"
-              className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 font-medium text-white shadow-sm transition-all hover:from-blue-700 hover:to-blue-800"
+              className="btn-primary w-full py-3"
             >
               Confirmar pedido
             </button>
@@ -202,12 +203,14 @@ export default async function CheckoutPage({ searchParams }: Props) {
             <div className="divide-y">
               {cart.items.map((item) => (
                 <div key={item.id} className="flex items-center gap-3 py-3">
-                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-50">
+                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-50">
                     {item.product.images[0] ? (
-                      <img
+                      <Image
                         src={item.product.images[0].url}
                         alt={item.product.name}
-                        className="h-full w-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="48px"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center text-gray-200">

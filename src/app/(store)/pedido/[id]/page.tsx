@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { prisma } from "@/lib/db"
@@ -63,12 +64,14 @@ export default async function OrderConfirmationPage({ params }: Props) {
           <div className="divide-y">
             {order.items.map((item) => (
               <div key={item.id} className="flex items-center gap-3 py-3">
-                <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-50">
+                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-50">
                   {item.product.images[0] ? (
-                    <img
+                    <Image
                       src={item.product.images[0].url}
                       alt={item.product.name}
-                      className="h-full w-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="48px"
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center text-gray-200">

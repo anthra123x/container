@@ -43,4 +43,10 @@ next-env.d.ts
 
 /src/generated/prisma
 
+# Obsidian project vault workspace config (user-specific)
+brain/.obsidian/
+
+# Supabase local temp
+supabase/.temp/
+
 .vercel

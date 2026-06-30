@@ -1,9 +1,11 @@
+import Image from "next/image"
 import Link from "next/link"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/db"
 import { formatCurrency } from "@/lib/utils/formatters"
 import { ShoppingBag, Trash2, Minus, Plus } from "lucide-react"
 import { removeFromCart, updateCartQuantity } from "@/lib/actions/cart"
+import { CartEmptyState } from "@/components/store/CartEmptyState"
 
 export const dynamic = "force-dynamic"
 
@@ -12,21 +14,7 @@ export default async function CartPage() {
   const sessionId = cookieStore.get("cart_session")?.value
 
   if (!sessionId) {
-    return (
-      <div className="mx-auto max-w-4xl px-4 py-16 text-center">
-        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
-          <ShoppingBag className="h-10 w-10 text-gray-400" />
-        </div>
-        <h1 className="text-3xl font-bold">Carrito de compras</h1>
-        <p className="mt-4 text-muted-foreground">Tu carrito está vacío.</p>
-        <Link
-          href="/productos"
-          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          Ver productos
-        </Link>
-      </div>
-    )
+    return <CartEmptyState />
   }
 
   const cart = await prisma.cart.findFirst({
@@ -47,21 +35,7 @@ export default async function CartPage() {
   })
 
   if (!cart || cart.items.length === 0) {
-    return (
-      <div className="mx-auto max-w-4xl px-4 py-16 text-center">
-        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
-          <ShoppingBag className="h-10 w-10 text-gray-400" />
-        </div>
-        <h1 className="text-3xl font-bold">Carrito de compras</h1>
-        <p className="mt-4 text-muted-foreground">Tu carrito está vacío.</p>
-        <Link
-          href="/productos"
-          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          Ver productos
-        </Link>
-      </div>
-    )
+    return <CartEmptyState />
   }
 
   const total = cart.items.reduce((sum, item) => {
@@ -79,12 +53,14 @@ export default async function CartPage() {
             key={item.id}
             className="flex items-start gap-3 rounded-xl border bg-white p-3 shadow-sm md:items-center md:gap-4 md:p-4"
           >
-            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-50 md:h-20 md:w-20">
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-50 md:h-20 md:w-20">
               {item.product.images[0] ? (
-                <img
+                <Image
                   src={item.product.images[0].url}
                   alt={item.product.images[0].alt ?? item.product.name}
-                  className="h-full w-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="80px"
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-gray-200">
@@ -158,7 +134,7 @@ export default async function CartPage() {
         </div>
         <Link
           href="/checkout"
-          className="mt-4 flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 font-medium text-white shadow-sm transition-all hover:from-blue-700 hover:to-blue-800"
+          className="btn-primary mt-4 w-full py-3"
         >
           Proceder al pago
         </Link>

@@ -2,6 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
+import { requireAdminRole } from "@/lib/auth-helpers"
 import { ROLES_CONFIG, getRoleLevel } from "@/lib/validations/user"
 import { Shield, ShieldCheck, ShieldHalf, Eye, Plus } from "lucide-react"
 
@@ -41,10 +42,8 @@ export default async function AdminUsersPage() {
   async function toggleActive(formData: FormData) {
     "use server"
     const userId = formData.get("userId") as string
-    const currentSession = await auth()
-    const currentRole = currentSession?.user?.role as string
-
-    if (getRoleLevel(currentRole) < 3) return
+    const currentSession = await requireAdminRole(3)
+    const currentRole = currentSession.user.role as string
 
     const target = await prisma.user.findUnique({ where: { id: userId } })
     if (!target || getRoleLevel(currentRole) <= getRoleLevel(target.role)) return

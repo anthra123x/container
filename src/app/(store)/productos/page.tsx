@@ -145,7 +145,7 @@ export default async function StoreProductsPage({ searchParams }: Props) {
               <p className="mt-1 text-sm text-gray-500">Intenta con otra categoría o término de búsqueda</p>
               <Link
                 href="/productos"
-                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+                className="btn-primary mt-6 gap-2"
               >
                 Ver todos los productos
               </Link>

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
+import { requireAdminRole } from "@/lib/auth-helpers"
 import { hash } from "bcryptjs"
 import type { Prisma } from "@prisma/client"
 import { createUserSchema, ROLES_CONFIG, getRoleLevel } from "@/lib/validations/user"
@@ -24,14 +25,10 @@ export default async function NewUserPage() {
   async function createUser(formData: FormData) {
     "use server"
 
-    const currentSession = await auth()
-    if (!currentSession?.user) redirect("/login")
-
+    const currentSession = await requireAdminRole(3)
     const currRole = currentSession.user.role as string
     const currLevel = getRoleLevel(currRole)
     const currStoreId = currentSession.user.storeId as string
-
-    if (currLevel < 3) redirect("/admin")
 
     const raw = {
       name: formData.get("name") as string,

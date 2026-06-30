@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
@@ -97,12 +98,14 @@ export default async function AdminProductsPage({ searchParams }: Props) {
                 <tr key={product.id} className={`hover:bg-muted/50 ${product.stock <= 0 ? "bg-red-50/50" : product.stock <= product.minStock ? "bg-yellow-50/50" : ""}`}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 overflow-hidden rounded-md bg-muted">
+                      <div className="relative h-10 w-10 overflow-hidden rounded-md bg-muted">
                         {product.images[0] && (
-                          <img
+                          <Image
                             src={product.images[0].url}
                             alt=""
-                            className="h-full w-full object-cover"
+                            fill
+                            className="object-cover"
+                            sizes="40px"
                           />
                         )}
                       </div>

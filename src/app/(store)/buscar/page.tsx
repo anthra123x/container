@@ -27,12 +27,12 @@ export default function BuscarPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="¿Qué estás buscando?"
-          className="flex-1 rounded-lg border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+          className="input-field flex-1"
           autoFocus
         />
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700"
+          className="btn-primary px-6 py-3"
         >
           <SearchIcon className="h-4 w-4" />
         </button>

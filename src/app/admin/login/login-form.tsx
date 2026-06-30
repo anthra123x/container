@@ -29,6 +29,11 @@ export function LoginForm() {
       redirect: false,
     })
 
+    if (result?.error === "LOCKOUT") {
+      setError("Demasiados intentos. Cuenta bloqueada por 15 minutos.")
+      return
+    }
+
     if (result?.error) {
       setError("Credenciales inválidas")
       return
@@ -52,7 +57,7 @@ export function LoginForm() {
         <input
           id="email"
           type="email"
-          className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+          className="input-field"
           placeholder="admin@container.com"
           {...register("email")}
         />
@@ -68,7 +73,7 @@ export function LoginForm() {
         <input
           id="password"
           type="password"
-          className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+          className="input-field"
           placeholder="••••••••"
           {...register("password")}
         />

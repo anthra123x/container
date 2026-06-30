@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { Package } from "lucide-react"
 import { formatCurrency } from "@/lib/utils/formatters"
@@ -32,14 +33,16 @@ export function ProductCard({
   return (
     <Link
       href={`/productos/${slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+      className="group relative flex flex-col overflow-hidden card-base transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
     >
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         {imageUrl ? (
-          <img
+          <Image
             src={imageUrl}
             alt={imageAlt ?? name}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+            fill
+            className="object-cover transition duration-500 group-hover:scale-110"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
         ) : (
           <div className="flex h-full items-center justify-center">
@@ -48,13 +51,13 @@ export function ProductCard({
         )}
 
         {hasDiscount && discountPercentage > 0 && (
-          <div className="absolute left-3 top-3 rounded-full bg-red-500 px-2.5 py-1 text-xs font-bold text-white shadow-lg">
+          <div className="badge-discount">
             -{discountPercentage}%
           </div>
         )}
 
         {isOutOfStock && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[1px]">
             <span className="rounded-lg bg-white/90 px-4 py-2 text-sm font-semibold text-gray-900 shadow-lg">
               Agotado
             </span>

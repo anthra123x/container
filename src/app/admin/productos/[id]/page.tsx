@@ -1,7 +1,8 @@
+import Image from "next/image"
 import { prisma } from "@/lib/db"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
-import { auth } from "@/lib/auth"
+import { requireAdminRole } from "@/lib/auth-helpers"
 import { Package, ArrowUp, ArrowDown, Star, Trash2 } from "lucide-react"
 import { uploadProductImages, deleteProductImage, setPrimaryImage, reorderImages } from "@/lib/actions/product-images"
 import { ImagePreview } from "@/components/admin/ImagePreview"
@@ -40,8 +41,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
 
       <form action={async (formData: FormData) => {
         "use server"
-        const currentSession = await auth()
-        if (!currentSession?.user) redirect("/login")
+        const currentSession = await requireAdminRole(2)
 
         const name = formData.get("name") as string
         const description = formData.get("description") as string
@@ -130,10 +130,12 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
               {product.images.map((img, i) => (
                 <div key={img.id} className="w-36">
                   <div className="relative mb-1.5 aspect-square overflow-hidden rounded-lg border bg-gray-50">
-                    <img
+                    <Image
                       src={img.url}
                       alt={img.alt ?? ""}
-                      className="h-full w-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="144px"
                     />
                     {img.isPrimary && (
                       <div className="absolute bottom-1 left-1 rounded-md bg-blue-600 px-1.5 py-0.5 text-[10px] font-medium text-white shadow">
