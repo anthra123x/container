@@ -15,6 +15,16 @@ connects:
 
 # Changelog
 
+## 2026-07-01 — Sprint 9: ePayco Payment Integration
+- ✅ ePayco checkout API (`src/lib/epayco.ts`): `createEpaycoCheckout()` + `verifyEpaycoSignature()`
+- ✅ Checkout flow redirige a ePayco después de crear la orden
+- ✅ Webhook (`/api/epayco/confirm`): recibe confirmación, actualiza estado a CONFIRMED + paidAt + epaycoRef
+- ✅ Migración `0002_add_epayco_fields`: columnas `epaycoRef` y `paymentMethod` en Order
+- ✅ Order confirmation (`/pedido/[id]`): muestra estado según resultado del pago (success/failed/pending)
+- ✅ `.env.example` con `EPAYCO_PUBLIC_KEY`, `EPAYCO_PRIVATE_KEY`, `EPAYCO_CUSTOMER_ID`, `EPAYCO_TEST`
+- ✅ Build 0 errors, Tests 31/31, Lint 0 errors
+- ⬜ Pendiente: obtener credenciales ePayco y configurar en `.env` y GitHub Secrets
+
 ## 2026-07-01 — Sprint 8: Seed Masivo + CI Fix + Secrets
 - ✅ Seed expandido: 4 → 31 productos, 4 → 6 categorías, 4 → 10 marcas
 - ✅ Nuevas categorías: Almacenamiento, Periféricos
