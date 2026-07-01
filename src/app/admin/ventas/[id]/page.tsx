@@ -5,6 +5,7 @@ import Link from "next/link"
 import { requireAdminRole } from "@/lib/auth-helpers"
 import { formatCurrency, formatDateTime } from "@/lib/utils/formatters"
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "@/lib/constants"
+import { sendWhatsAppMessage, buildOrderMessage } from "@/lib/whatsapp"
 
 export const dynamic = "force-dynamic"
 
@@ -91,6 +92,21 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
     }
 
     await prisma.$transaction(transactions)
+
+    if (currentOrder.customerPhone) {
+      const message = buildOrderMessage({
+        id: currentOrder.id,
+        totalFormatted: formatCurrency(currentOrder.total),
+        customerName: currentOrder.customerName,
+        shippingCity: currentOrder.shippingCity,
+      }, newStatus)
+      if (message) {
+        const result = await sendWhatsAppMessage(currentOrder.customerPhone, message)
+        if (!result.sent && result.method === "api") {
+          console.warn("[WhatsApp] notification failed for order", id, result.error)
+        }
+      }
+    }
 
     redirect(`/admin/ventas/${id}`)
   }
