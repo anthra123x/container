@@ -69,7 +69,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
     <div className="mx-auto max-w-4xl px-4 py-8">
       <h1 className="mb-2 text-3xl font-bold">Finalizar compra</h1>
       <p className="mb-8 text-muted-foreground">
-        Completa tus datos para realizar el pedido. Te contactaremos por WhatsApp para coordinar el pago y la entrega.
+        Completa tus datos y serás redirigido a ePayco para pagar de forma segura con tarjeta, PSE, Nequi o Daviplata.
       </p>
 
       {error && (
@@ -191,7 +191,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
               type="submit"
               className="btn-primary w-full py-3"
             >
-              Confirmar pedido
+              Ir a pagar
             </button>
           </form>
         </div>
@@ -236,10 +236,10 @@ export default async function CheckoutPage({ searchParams }: Props) {
             </div>
 
             <div className="mt-4 rounded-lg bg-blue-50 p-3 text-xs text-blue-700">
-              <p className="font-medium">Pago contraentrega</p>
+              <p className="font-medium">Pago seguro con ePayco</p>
               <p className="mt-1">
-                No necesitas pagar ahora. Te contactaremos por WhatsApp para coordinar el pago por Nequi o Daviplata.
-                Enviamos a todo Colombia.
+                Al confirmar serás redirigido a ePayco para pagar con tarjeta de crédito, débito,
+                PSE (transferencia bancaria), Nequi o Daviplata. Enviamos a todo Colombia.
               </p>
             </div>
           </div>

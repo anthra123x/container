@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { checkoutSchema } from "@/lib/validations/order"
+import { createEpaycoCheckout } from "@/lib/epayco"
 
 export async function createOrder(formData: FormData) {
   const cookieStore = await cookies()
@@ -152,7 +153,28 @@ export async function createOrder(formData: FormData) {
   })
 
   cookieStore.delete("cart_session")
-
   revalidatePath("/carrito")
+
+  const description = cart.items.map(i => i.product.name).join(", ").slice(0, 250)
+
+  const epayco = await createEpaycoCheckout({
+    orderId: order.id,
+    total: Number(order.total),
+    customerName: data.customerName,
+    customerEmail: data.customerEmail || "",
+    customerPhone: data.customerPhone || "",
+    description,
+  })
+
+  if (epayco.ok && epayco.redirectUrl) {
+    if (epayco.epaycoRef) {
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { epaycoRef: epayco.epaycoRef },
+      })
+    }
+    redirect(epayco.redirectUrl)
+  }
+
   redirect(`/pedido/${order.id}`)
 }
