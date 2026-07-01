@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { prisma } from "@/lib/db"
+import { prisma, withRetry } from "@/lib/db"
 import { ArrowRight, Package, Shield, Truck, CreditCard, Star } from "lucide-react"
 import { HeroImage } from "@/components/store/HeroImage"
 import { ProductCard } from "@/components/store/ProductCard"
@@ -7,22 +7,26 @@ import { ProductCard } from "@/components/store/ProductCard"
 export const dynamic = "force-dynamic"
 
 async function getFeaturedProducts() {
-  return prisma.product.findMany({
-    where: { isActive: true, isFeatured: true },
-    include: {
-      images: { where: { isPrimary: true }, take: 1 },
-      category: true,
-    },
-    orderBy: { createdAt: "desc" },
-    take: 8,
-  })
+  return withRetry(() =>
+    prisma.product.findMany({
+      where: { isActive: true, isFeatured: true },
+      include: {
+        images: { where: { isPrimary: true }, take: 1 },
+        category: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 8,
+    })
+  )
 }
 
 async function getCategories() {
-  return prisma.category.findMany({
-    where: { isActive: true, parentId: null },
-    orderBy: { sortOrder: "asc" },
-  })
+  return withRetry(() =>
+    prisma.category.findMany({
+      where: { isActive: true, parentId: null },
+      orderBy: { sortOrder: "asc" },
+    })
+  )
 }
 
 const benefits = [

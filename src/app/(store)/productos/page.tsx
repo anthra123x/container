@@ -1,6 +1,6 @@
 import Link from "next/link"
 import type { Prisma } from "@prisma/client"
-import { prisma } from "@/lib/db"
+import { prisma, withRetry } from "@/lib/db"
 import { ProductCard } from "@/components/store/ProductCard"
 
 export const dynamic = "force-dynamic"
@@ -24,20 +24,22 @@ export default async function StoreProductsPage({ searchParams }: Props) {
   }
 
   if (categorySlug) {
-    const category = await prisma.category.findUnique({ where: { slug: categorySlug } })
+    const category = await withRetry(() => prisma.category.findUnique({ where: { slug: categorySlug } }))
     if (category) where.categoryId = category.id
   }
 
   const [products, categories] = await Promise.all([
-    prisma.product.findMany({
-      where,
-      include: {
-        images: { where: { isPrimary: true }, take: 1 },
-        category: true,
-      },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.category.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" } }),
+    withRetry(() =>
+      prisma.product.findMany({
+        where,
+        include: {
+          images: { where: { isPrimary: true }, take: 1 },
+          category: true,
+        },
+        orderBy: { createdAt: "desc" },
+      })
+    ),
+    withRetry(() => prisma.category.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" } })),
   ])
 
   const activeCategory = categorySlug
@@ -91,7 +93,7 @@ export default async function StoreProductsPage({ searchParams }: Props) {
           </div>
 
           <div className="mb-6 -mx-4 overflow-x-auto px-4 lg:hidden">
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-max">
               <Link
                 href="/productos"
                 className={`shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium transition-colors ${

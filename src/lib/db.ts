@@ -4,6 +4,21 @@ import pg from "pg"
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient; pool: pg.Pool }
 
+export async function withRetry<T>(fn: () => Promise<T>, retries = 2): Promise<T> {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await fn()
+    } catch (err) {
+      if (i === retries) throw err
+      const isPoolError = String(err).includes("DriverAdapterError") || String(err).includes("timeout")
+      if (!isPoolError) throw err
+      console.warn(`[DB] retry ${i + 1}/${retries} after error:`, (err as Error).message)
+      await new Promise(r => setTimeout(r, 500 * (i + 1)))
+    }
+  }
+  throw new Error("unreachable")
+}
+
 function createPrismaClient() {
   const url = process.env.DATABASE_URL!
 
@@ -11,8 +26,8 @@ function createPrismaClient() {
     connectionString: url,
     ssl: { rejectUnauthorized: false },
     max: 2,
-    idleTimeoutMillis: 10000,
-    connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 8000,
+    connectionTimeoutMillis: 3000,
     allowExitOnIdle: true,
   })
 
