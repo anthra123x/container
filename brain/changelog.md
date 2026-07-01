@@ -15,6 +15,17 @@ connects:
 
 # Changelog
 
+## 2026-07-01 — Sprint 8: Seed Masivo + CI Fix + Secrets
+- ✅ Seed expandido: 4 → 31 productos, 4 → 6 categorías, 4 → 10 marcas
+- ✅ Nuevas categorías: Almacenamiento, Periféricos
+- ✅ Nuevas marcas: LG, Harman Kardon, JBL, Logitech, Kingston, HP
+- ✅ Precios realistas en COP con comparePrice para descuentos
+- ✅ `npm run seed` en package.json
+- ✅ CI/CD: branch `main` → `master` (branch real del repo)
+- ✅ `.env` documentado con placeholders para `SUPABASE_SERVICE_ROLE_KEY` y `SENTRY_*`
+- ✅ Vault docs actualizados (database/schema.md, data/products.md)
+- ✅ Build 0 errors, Tests 31/31, Lint 0 errors
+
 ## 2026-06-30 — RLS + Indexes + Vault Neural
 - ✅ RLS en 18 tablas públicas (block anon + authenticated)
 - ✅ Storage bucket policies (block anon uploads)

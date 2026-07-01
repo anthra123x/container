@@ -56,7 +56,7 @@ Store pública funcional + Admin completo + Seguridad
 | Sprint | Enfoque | Prioridad |
 |--------|---------|-----------|
 | 7 | RLS + Indexes + Vault neural | ✅ Completado |
-| 8 | Seeds + Deploy + CI secrets | 🔴 Alta |
+| 8 | Seeds + Deploy + CI secrets | ✅ Completado |
 | 9 | Payment integration | 🔴 Alta |
 | 10 | Notificaciones WhatsApp | 🟡 Media |
 | 11 | Búsqueda + filtros avanzados | 🟡 Media |
