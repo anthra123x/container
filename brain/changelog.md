@@ -15,6 +15,15 @@ connects:
 
 # Changelog
 
+## 2026-07-01 — Sprint 10: WhatsApp Notifications
+- ✅ WhatsApp service (`src/lib/whatsapp.ts`): Cloud API + wa.me fallback
+- ✅ Auto-notifica al cliente al cambiar estado desde admin ventas
+- ✅ Mensajes personalizados por estado: CONFIRMADO, PREPARANDO, EN CAMINO, ENTREGADO, CANCELADO, REEMBOLSO
+- ✅ Fallback: si Cloud API no está configurado, genera link wa.me manual
+- ✅ `.env.example` con `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_ACCESS_TOKEN`
+- ✅ Build 0 errors, Lint 0 errors
+- ⬜ Pendiente: configurar WhatsApp Business API en Facebook Developers
+
 ## 2026-07-01 — Sprint 9: ePayco Payment Integration
 - ✅ ePayco checkout API (`src/lib/epayco.ts`): `createEpaycoCheckout()` + `verifyEpaycoSignature()`
 - ✅ Checkout flow redirige a ePayco después de crear la orden

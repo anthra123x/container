@@ -58,7 +58,7 @@ Store pública funcional + Admin completo + Seguridad
 | 7 | RLS + Indexes + Vault neural | ✅ Completado |
 | 8 | Seeds + Deploy + CI secrets | ✅ Completado |
 | 9 | Payment integration | ✅ Completado |
-| 10 | Notificaciones WhatsApp | 🟡 Media |
+| 10 | Notificaciones WhatsApp | ✅ Completado |
 | 11 | Búsqueda + filtros avanzados | 🟡 Media |
 | 12 | Galerías + variantes operativas | 🟢 Baja |
 
