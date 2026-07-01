@@ -14,9 +14,29 @@ Este proyecto tiene su propio vault Obsidian en `./brain/` que funciona como una
 ```
 brain/
 ├── index.md              ← hub principal (weight: 1.0)
+├── roadmap.md            ← visión, metas, sprints
+├── architecture.md       ← arquitectura del sistema
+├── stack.md              ← tech stack completo
+├── changelog.md          ← historial de cambios
 ├── decisions/            ← ADRs con connects[] + weight
 ├── sessions/             ← logs de sesión con connects[]
 ├── facts/                ← descubrimientos técnicos
+├── store/                ← documentación de la tienda pública
+│   └── overview.md
+├── admin/                ← documentación del panel admin
+│   └── overview.md
+├── database/             ← schema, índices, migraciones
+│   └── schema.md
+├── api/                  ← endpoints, server actions, storage
+│   └── endpoints.md
+├── auth/                 ← autenticación, roles, rate limiting
+│   └── flow.md
+├── deployment/           ← env, CI/CD, monitoreo
+│   └── env.md
+├── data/                 ← catálogo de productos, seed
+│   └── products.md
+├── tests/                ← estrategia de calidad
+│   └── strategy.md
 └── templates/            ← plantillas con frontmatter neural
 ```
 
@@ -64,9 +84,10 @@ Máximo 7 notas, briefing de ~20 líneas. Ver `obsidian-brain/SKILL.md` para el 
 | Inicio de sesión | Leer `brain/index.md` + propagación multi-hop |
 | Decisión no-trivial | Crear `brain/decisions/YYYY-MM-DD-titulo.md` con connects[] |
 | Descubrimiento técnico | Crear `brain/facts/titulo.md` con connects[] |
-| Fin de sesión | Crear `brain/sessions/YYYY-MM-DD-tema.md` + actualizar `brain/index.md` |
+| Cambio de feature | Actualizar sección correspondiente (`store/`, `admin/`, `database/`, etc.) |
+| Fin de sesión | Crear `brain/sessions/YYYY-MM-DD-tema.md` + actualizar `brain/index.md` y `brain/changelog.md` |
 
-Los wikilinks usan rutas relativas al vault: `[[decisions/titulo]]`, `[[sessions/titulo]]`, `[[facts/titulo]]`.
+Los wikilinks usan rutas relativas al vault: `[[decisions/titulo]]`, `[[sessions/titulo]]`, `[[facts/titulo]]`, `[[store/overview]]`, `[[admin/overview]]`, etc.
 
 Abrir: `flatpak run md.obsidian.Obsidian` → "Open folder as vault" → `brain/`
 <!-- END:project-vault -->
