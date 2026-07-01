@@ -17,15 +17,19 @@ connects:
 
 ## 🔴 Alta Prioridad (requerido para producción)
 
-### 1. DNS — Apuntar dominio a Vercel
-En el panel de tu proveedor de dominio (donde compraste `tecnicellstore.com`), agrega:
-```
-A tecnicellstore.com → 76.76.21.21
-```
-Luego verifica:
-```bash
-vercel domains verify tecnicellstore.com
-```
+### 1. Dominio personalizado (cuando lo compres)
+- Comprar dominio en cualquier proveedor (Namecheap, GoDaddy, .com.co, etc.)
+- Agregarlo a Vercel:
+  ```bash
+  vercel domain add tudominio.com
+  ```
+- Configurar DNS: `A tudominio.com → 76.76.21.21`
+- Luego actualizar `NEXT_PUBLIC_APP_URL` en Vercel:
+  ```bash
+  vercel env rm NEXT_PUBLIC_APP_URL production
+  echo "https://tudominio.com" | vercel env add NEXT_PUBLIC_APP_URL production
+  ```
+- El deploy se realiasola solo.
 
 ### 2. SUPABASE_SERVICE_ROLE_KEY
 - Ir a [Supabase Dashboard](https://supabase.com) > Project > Settings > API
@@ -43,14 +47,8 @@ vercel domains verify tecnicellstore.com
   ```bash
   vercel env add EPAYCO_PUBLIC_KEY production
   vercel env add EPAYCO_PRIVATE_KEY production
-  vercel env add EPAYCO_CUSTOMER_ID production
   ```
 - En pruebas: dejar `EPAYCO_TEST="true"`. Cambiar a `"false"` en producción.
-- GitHub Secrets (si quieres que CI funcione):
-  ```bash
-  gh secret set EPAYCO_PUBLIC_KEY --repo anthra123x/container --body "tu_key"
-  gh secret set EPAYCO_PRIVATE_KEY --repo anthra123x/container --body "tu_key"
-  ```
 
 ## 🟡 Media Prioridad
 
@@ -81,9 +79,6 @@ vercel domains verify tecnicellstore.com
 - Subir imágenes reales al bucket `product-images`
 - Actualizar `ProductImage.url` en la DB
 
-### 7. Google Analytics / Tag Manager
-- (Opcional) Configurar para tracking de visitas
-
 ## Lo que ya está configurado (no necesitas hacer nada) ✅
 
 | Variable | Dónde está configurada |
@@ -92,11 +87,12 @@ vercel domains verify tecnicellstore.com
 | `AUTH_SECRET` | .env ✅ · Vercel ✅ · GitHub Secrets ✅ |
 | `NEXT_PUBLIC_SUPABASE_URL` | .env ✅ · Vercel ✅ · GitHub Secrets ✅ |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | .env ✅ · Vercel ✅ · GitHub Secrets ✅ |
-| `NEXT_PUBLIC_APP_URL` | .env ✅ · Vercel ✅ (https://tecnicellstore.com) |
-| Dominio `tecnicellstore.com` | Vercel project ✅ (falta DNS) |
+| `NEXT_PUBLIC_APP_URL` | .env ✅ · Vercel ✅ (`https://container-store-seven.vercel.app`) |
 | CI/CD branch | `master` ✅ (lint → build → test) |
 | Migration `0002_add_epayco_fields` | Supabase DB ✅ |
 | Seed 31 productos | DB ✅ |
+| ePayco webhook endpoint | `/api/epayco/confirm` ✅ |
+| WhatsApp service + fallback | `src/lib/whatsapp.ts` ✅ |
 
 ## Related
 - [[index]]
