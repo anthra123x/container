@@ -44,10 +44,10 @@ Store (1) ──┬── (N) User
 | `Store` | 1 | Tienda (multi-tenant listo) |
 | `User` | 1 | Usuarios admin |
 | `StoreConfiguration` | 1 | Configuración de tienda (WhatsApp, SEO, términos) |
-| `Category` | 5 | Categorías con jerarquía (parentId) |
-| `Brand` | 4 | Marcas |
-| `Product` | 2 | Productos |
-| `ProductImage` | 2 | Imágenes de productos |
+| `Category` | 7 | Categorías con jerarquía (parentId) |
+| `Brand` | 10 | Marcas |
+| `Product` | 32 | Productos (31 nuevos + 1 legacy) |
+| `ProductImage` | 31 | Imágenes de productos (1 por producto) |
 | `ProductVariant` | 0 | Variantes (tamaño, color) — sin uso aún |
 | `Gallery` | 0 | Galerías de imágenes |
 | `GalleryImage` | 0 | Imágenes de galería |
