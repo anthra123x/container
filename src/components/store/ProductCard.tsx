@@ -33,7 +33,7 @@ export function ProductCard({
   return (
     <Link
       href={`/productos/${slug}`}
-      className="group relative flex flex-col overflow-hidden card-base transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+      className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-100 bg-white ring-1 ring-foreground/5 transition-all duration-300 hover:-translate-y-1 hover:border-blue-100 hover:ring-blue-100"
     >
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         {imageUrl ? (
@@ -41,7 +41,7 @@ export function ProductCard({
             src={imageUrl}
             alt={imageAlt ?? name}
             fill
-            className="object-cover transition duration-500 group-hover:scale-110"
+            className="object-cover transition duration-300 ease-out group-hover:scale-110"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
         ) : (

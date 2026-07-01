@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Search, ShoppingCart, Menu, Package, X, Phone, Mail, MessageCircle } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useCart } from "@/hooks/use-cart"
 
 interface StoreConfig {
@@ -35,8 +35,25 @@ function StoreNavbar({ config }: { config: StoreConfig }) {
   const pathname = usePathname()
   const { totalItems } = useCart()
 
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+    return () => { document.body.style.overflow = "" }
+  }, [mobileOpen])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false)
+    }
+    document.addEventListener("keydown", onKey)
+    return () => document.removeEventListener("keydown", onKey)
+  }, [])
+
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm md:border-gray-200/50 md:bg-white/80 md:backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white md:border-gray-200/50 md:ring-1 md:ring-foreground/5 md:bg-white/80 md:backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-blue-600">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-sm">
@@ -102,10 +119,10 @@ function StoreNavbar({ config }: { config: StoreConfig }) {
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/60 md:hidden"
+            className="fixed inset-0 z-40 animate-in fade-in bg-black/60 duration-200 md:hidden"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="fixed inset-y-0 right-0 z-50 flex w-72 flex-col bg-white shadow-2xl md:hidden">
+          <div className="fixed inset-y-0 right-0 z-50 flex w-72 flex-col bg-white shadow-2xl animate-in slide-in-from-right duration-300 md:hidden">
             <div className="flex items-center justify-between border-b px-5 py-4">
               <div className="flex items-center gap-2 font-bold text-blue-600">
                 <Package className="h-5 w-5" />

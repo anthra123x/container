@@ -81,7 +81,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
       <div className="grid gap-8 lg:grid-cols-5">
         <div className="lg:col-span-3">
           <form action={createOrder} className="space-y-5">
-            <div className="rounded-xl border bg-white p-6 shadow-sm">
+            <div className="rounded-xl border bg-white p-6 ring-1 ring-foreground/5">
               <h2 className="mb-4 text-lg font-semibold">Tus datos</h2>
 
               <div className="space-y-4">
@@ -126,7 +126,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
               </div>
             </div>
 
-            <div className="rounded-xl border bg-white p-6 shadow-sm">
+            <div className="rounded-xl border bg-white p-6 ring-1 ring-foreground/5">
               <h2 className="mb-4 text-lg font-semibold">Dirección de envío</h2>
 
               <div className="space-y-4">
@@ -177,7 +177,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
               </div>
             </div>
 
-            <div className="rounded-xl border bg-white p-6 shadow-sm">
+            <div className="rounded-xl border bg-white p-6 ring-1 ring-foreground/5">
               <h2 className="mb-4 text-lg font-semibold">Notas del pedido</h2>
               <textarea
                 name="notes"
@@ -197,7 +197,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
         </div>
 
         <div className="lg:col-span-2">
-          <div className="rounded-xl border bg-white p-6 shadow-sm">
+          <div className="rounded-xl border bg-white p-6 ring-1 ring-foreground/5">
             <h2 className="mb-4 text-lg font-semibold">Resumen del pedido</h2>
 
             <div className="divide-y">

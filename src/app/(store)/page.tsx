@@ -104,12 +104,13 @@ export default async function StoreHome() {
         <div className="absolute -bottom-1 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent" />
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 -mt-8 relative z-10 pb-12">
+      <section className="mx-auto max-w-7xl px-4 -mt-8 relative z-10 pb-12 animate-in fade-in duration-700">
         <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-4">
-          {benefits.map((benefit) => (
+          {benefits.map((benefit, i) => (
             <div
               key={benefit.title}
-              className="group flex items-center gap-2 rounded-xl border border-gray-100 bg-white p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-lg md:items-start md:gap-3 md:p-4"
+              className="group flex items-center gap-2 rounded-xl border border-gray-100 bg-white p-3 ring-1 ring-foreground/5 transition-all hover:-translate-y-0.5 hover:border-blue-100 hover:ring-blue-100 md:items-start md:gap-3 md:p-4"
+              style={{ animationDelay: `${i * 80}ms` }}
             >
               <div className="shrink-0 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 p-1.5 transition-colors group-hover:from-blue-100 group-hover:to-blue-200 md:p-2.5">
                 <benefit.icon className="h-4 w-4 text-blue-600 md:h-5 md:w-5" />
@@ -124,7 +125,7 @@ export default async function StoreHome() {
       </section>
 
       {categories.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 pb-16">
+        <section className="mx-auto max-w-7xl px-4 pb-16 animate-in fade-in duration-700" style={{ animationDelay: "100ms" }}>
           <div className="mb-8 flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">Categorías</h2>
@@ -139,11 +140,12 @@ export default async function StoreHome() {
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map((cat) => (
+            {categories.map((cat, i) => (
               <Link
                 key={cat.id}
                 href={`/productos?categoria=${cat.slug}`}
-                className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-100 hover:shadow-xl md:p-6"
+                className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white p-4 ring-1 ring-foreground/5 transition-all duration-300 hover:-translate-y-1 hover:border-blue-100 hover:ring-blue-100 md:p-6"
+                style={{ animationDelay: `${i * 100}ms` }}
               >
                 <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 transition-all duration-500 group-hover:scale-[2] group-hover:from-blue-100 group-hover:to-blue-200" />
                 <div className="relative">
@@ -165,7 +167,7 @@ export default async function StoreHome() {
       )}
 
       {products.length > 0 && (
-        <section className="bg-gray-50/80 py-16">
+        <section className="bg-gray-50/80 py-16 animate-in fade-in duration-700" style={{ animationDelay: "200ms" }}>
           <div className="mx-auto max-w-7xl px-4">
             <div className="mb-8 flex items-center justify-between">
               <div>
@@ -181,18 +183,19 @@ export default async function StoreHome() {
               </Link>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  slug={product.slug}
-                  name={product.name}
-                  price={Number(product.price)}
-                  comparePrice={product.comparePrice ? Number(product.comparePrice) : null}
-                  imageUrl={product.images[0]?.url ?? null}
-                  imageAlt={product.images[0]?.alt ?? null}
-                  categoryName={product.category?.name}
-                  stock={product.stock}
-                />
+              {products.map((product, i) => (
+                <div key={product.id} className="animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: `${i * 80}ms` }}>
+                  <ProductCard
+                    slug={product.slug}
+                    name={product.name}
+                    price={Number(product.price)}
+                    comparePrice={product.comparePrice ? Number(product.comparePrice) : null}
+                    imageUrl={product.images[0]?.url ?? null}
+                    imageAlt={product.images[0]?.alt ?? null}
+                    categoryName={product.category?.name}
+                    stock={product.stock}
+                  />
+                </div>
               ))}
             </div>
             <div className="mt-8 text-center sm:hidden">

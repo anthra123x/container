@@ -51,7 +51,7 @@ export default async function CartPage() {
         {cart.items.map((item) => (
           <div
             key={item.id}
-            className="flex items-start gap-3 rounded-xl border bg-white p-3 shadow-sm md:items-center md:gap-4 md:p-4"
+            className="flex items-start gap-3 rounded-xl border bg-white p-3 ring-1 ring-foreground/5 md:items-center md:gap-4 md:p-4"
           >
             <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-50 md:h-20 md:w-20">
               {item.product.images[0] ? (
@@ -127,7 +127,7 @@ export default async function CartPage() {
         ))}
       </div>
 
-      <div className="mt-8 rounded-xl border bg-white p-6 shadow-sm">
+      <div className="mt-8 rounded-xl border bg-white p-6 ring-1 ring-foreground/5">
         <div className="flex items-center justify-between text-lg font-semibold">
           <span>Total</span>
           <span className="text-blue-600">{formatCurrency(total)}</span>

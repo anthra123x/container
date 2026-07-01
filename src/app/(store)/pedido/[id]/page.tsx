@@ -83,7 +83,7 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
       </div>
 
       <div className="mt-10 space-y-6">
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
+        <div className="rounded-xl border bg-white p-6 ring-1 ring-foreground/5">
           <h2 className="mb-4 text-lg font-semibold">Resumen del pedido</h2>
 
           <div className="divide-y">
@@ -123,7 +123,7 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
         </div>
 
         {paymentSuccess ? (
-          <div className="rounded-xl border border-green-200 bg-green-50 p-6 shadow-sm">
+          <div className="rounded-xl border border-green-200 bg-green-50 p-6 ring-1 ring-green-200">
             <div className="flex items-center gap-2 text-green-800">
               <CreditCard className="h-5 w-5" />
               <h2 className="font-semibold">Pago confirmado</h2>
@@ -133,7 +133,7 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
             </p>
           </div>
         ) : paymentFailed ? (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-6 shadow-sm">
+          <div className="rounded-xl border border-red-200 bg-red-50 p-6 ring-1 ring-red-200">
             <h2 className="font-semibold text-red-800">Intenta de nuevo</h2>
             <p className="mt-2 text-sm text-red-700">
               El pago fue rechazado. Puedes contactarnos por WhatsApp para coordinar otro método de pago.
@@ -142,14 +142,14 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
               href={`https://wa.me/${cleanPhone}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-secondary mt-4 inline-flex items-center gap-2"
+              className="mt-4 inline-flex items-center gap-2 rounded-xl border border-green-600 bg-green-50 px-5 py-2.5 text-sm font-medium text-green-700 transition-all hover:bg-green-100"
             >
               <MessageCircle className="h-4 w-4" />
               Contactar por WhatsApp
             </a>
           </div>
         ) : (
-          <div className="rounded-xl border bg-white p-6 shadow-sm">
+          <div className="rounded-xl border bg-white p-6 ring-1 ring-foreground/5">
             <h2 className="mb-3 text-lg font-semibold">Estado del pedido</h2>
             <div className="space-y-3 text-sm text-gray-600">
               <p>
@@ -170,7 +170,7 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
         )}
 
         {!isPaid && (
-          <div className="rounded-xl border bg-white p-6 shadow-sm">
+          <div className="rounded-xl border bg-white p-6 ring-1 ring-foreground/5">
             <h2 className="mb-3 text-lg font-semibold">¿Necesitas ayuda?</h2>
             <p className="mb-4 text-sm text-gray-600">
               Si tienes dudas sobre tu pedido, contáctanos por WhatsApp.
@@ -179,7 +179,7 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
               href={`https://wa.me/${cleanPhone}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-6 py-3 font-medium text-white shadow-sm transition-all hover:bg-green-700"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-6 py-3 font-medium text-white ring-1 ring-green-700 transition-all hover:bg-green-700 active:scale-[0.98]"
             >
               <MessageCircle className="h-5 w-5" />
               Contactar por WhatsApp

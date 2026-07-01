@@ -74,7 +74,7 @@ export default async function MyOrdersPage({ searchParams }: Props) {
       </div>
 
       {orders.length === 0 ? (
-        <div className="rounded-xl border bg-white p-12 text-center shadow-sm">
+        <div className="rounded-xl border bg-white p-12 text-center ring-1 ring-foreground/5">
           <Package className="mx-auto h-12 w-12 text-gray-200" />
           <p className="mt-4 text-muted-foreground">No hay pedidos registrados con este número.</p>
           <Link
