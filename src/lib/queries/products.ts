@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db"
-import { Prisma } from "@prisma/client"
+import type { Prisma } from "@prisma/client"
 
 export async function getFilteredProducts(params: {
   search?: string
@@ -11,11 +11,9 @@ export async function getFilteredProducts(params: {
   page?: number
   pageSize?: number
 }) {
-  const { search, categorySlug, minPrice, maxPrice, sort, page = 1, pageSize = 20 } = params
+  const { search, categorySlug, brandSlug, minPrice, maxPrice, sort, page = 1, pageSize = 20 } = params
 
-  const where: Prisma.ProductWhereInput = {
-    isActive: true,
-  }
+  const where: Prisma.ProductWhereInput = { isActive: true }
 
   if (search) {
     where.OR = [
@@ -26,9 +24,12 @@ export async function getFilteredProducts(params: {
 
   if (categorySlug) {
     const category = await prisma.category.findUnique({ where: { slug: categorySlug } })
-    if (category) {
-      where.categoryId = category.id
-    }
+    if (category) where.categoryId = category.id
+  }
+
+  if (brandSlug) {
+    const brand = await prisma.brand.findUnique({ where: { slug: brandSlug } })
+    if (brand) where.brandId = brand.id
   }
 
   if (minPrice !== undefined || maxPrice !== undefined) {
@@ -79,4 +80,45 @@ export async function getProductBySlug(slug: string) {
       },
     },
   })
+}
+
+export async function getCatalogFacets() {
+  const baseWhere: Prisma.ProductWhereInput = { isActive: true }
+
+  const [categories, brands, priceAgg] = await Promise.all([
+    prisma.category.findMany({
+      where: { isActive: true },
+      include: { _count: { select: { products: { where: { isActive: true } } } } },
+      orderBy: { sortOrder: "asc" },
+    }),
+    prisma.brand.findMany({
+      where: { isActive: true },
+      include: { _count: { select: { products: { where: { isActive: true } } } } },
+      orderBy: { name: "asc" },
+    }),
+    prisma.product.aggregate({
+      where: baseWhere,
+      _min: { price: true },
+      _max: { price: true },
+    }),
+  ])
+
+  return {
+    categories: categories.map((c) => ({
+      id: c.id,
+      slug: c.slug,
+      name: c.name,
+      count: c._count.products,
+    })),
+    brands: brands.map((b) => ({
+      id: b.id,
+      slug: b.slug,
+      name: b.name,
+      count: b._count.products,
+    })),
+    priceRange: {
+      min: Number(priceAgg._min.price ?? 0),
+      max: Number(priceAgg._max.price ?? 1000000),
+    },
+  }
 }

@@ -1,7 +1,10 @@
 import Link from "next/link"
-import type { Prisma } from "@prisma/client"
 import { prisma, withRetry } from "@/lib/db"
+import { getFilteredProducts, getCatalogFacets } from "@/lib/queries/products"
 import { ProductCard } from "@/components/store/ProductCard"
+import { FilterSidebar } from "@/components/store/FilterSidebar"
+import { SortSelect } from "@/components/store/SortSelect"
+import { FilterChips } from "@/components/store/FilterChips"
 
 export const dynamic = "force-dynamic"
 
@@ -9,115 +12,105 @@ interface Props {
   searchParams: Promise<{ [key: string]: string | undefined }>
 }
 
+const SORT_OPTIONS = [
+  { value: "newest", label: "Más recientes" },
+  { value: "price_asc", label: "Precio: menor a mayor" },
+  { value: "price_desc", label: "Precio: mayor a menor" },
+  { value: "name", label: "Nombre A-Z" },
+] as const
+
 export default async function StoreProductsPage({ searchParams }: Props) {
   const sp = await searchParams
   const search = sp.q
   const categorySlug = sp.categoria
+  const brandSlug = sp.marca
+  const minPrice = sp.minPrice ? Number(sp.minPrice) : undefined
+  const maxPrice = sp.maxPrice ? Number(sp.maxPrice) : undefined
+  const sort = sp.sort ?? "newest"
+  const page = sp.page ? Number(sp.page) : 1
 
-  const where: Prisma.ProductWhereInput = { isActive: true }
-
-  if (search) {
-    where.OR = [
-      { name: { contains: search, mode: "insensitive" } },
-      { description: { contains: search, mode: "insensitive" } },
-    ]
-  }
-
-  if (categorySlug) {
-    const category = await withRetry(() => prisma.category.findUnique({ where: { slug: categorySlug } }))
-    if (category) where.categoryId = category.id
-  }
-
-  const [products, categories] = await Promise.all([
-    withRetry(() =>
-      prisma.product.findMany({
-        where,
-        include: {
-          images: { where: { isPrimary: true }, take: 1 },
-          category: true,
-        },
-        orderBy: { createdAt: "desc" },
-      })
-    ),
-    withRetry(() => prisma.category.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" } })),
+  const [{ products, total }, facets] = await Promise.all([
+    getFilteredProducts({ search, categorySlug, brandSlug, minPrice, maxPrice, sort, page }),
+    withRetry(() => getCatalogFacets()),
   ])
 
   const activeCategory = categorySlug
-    ? categories.find((c) => c.slug === categorySlug)
+    ? facets.categories.find((c) => c.slug === categorySlug)
     : null
+
+  const activeBrand = brandSlug
+    ? facets.brands.find((b) => b.slug === brandSlug)
+    : null
+
+  const activeFilters = [
+    ...(search ? [{ label: `"${search}"`, href: removeParam("q") }] : []),
+    ...(activeCategory ? [{ label: activeCategory.name, href: removeParam("categoria") }] : []),
+    ...(activeBrand ? [{ label: activeBrand.name, href: removeParam("marca") }] : []),
+    ...(minPrice !== undefined || maxPrice !== undefined
+      ? [{ label: `$${minPrice ?? 0} - $${maxPrice ?? "∞"}`, href: removeParams(["minPrice", "maxPrice"]) }]
+      : []),
+  ]
+
+  function removeParam(key: string) {
+    const params = new URLSearchParams()
+    for (const [k, v] of Object.entries(sp)) {
+      if (k !== key && v) params.set(k, v)
+    }
+    return `/productos${params.toString() ? `?${params.toString()}` : ""}`
+  }
+
+  function removeParams(keys: string[]) {
+    const params = new URLSearchParams()
+    for (const [k, v] of Object.entries(sp)) {
+      if (!keys.includes(k) && v) params.set(k, v)
+    }
+    return `/productos${params.toString() ? `?${params.toString()}` : ""}`
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="flex gap-8">
         <aside className="hidden w-64 shrink-0 lg:block">
-          <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-            <h2 className="mb-3 text-sm font-semibold tracking-wide text-gray-900">Categorías</h2>
-            <div className="space-y-1">
-              <Link
-                href="/productos"
-                className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
-                  !activeCategory
-                    ? "bg-blue-50 font-medium text-blue-600"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-blue-600"
-                }`}
-              >
-                Todas
-              </Link>
-              {categories.map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={`/productos?categoria=${cat.slug}`}
-                  className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
-                    activeCategory?.slug === cat.slug
-                      ? "bg-blue-50 font-medium text-blue-600"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-blue-600"
-                  }`}
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </div>
-          </div>
+          <FilterSidebar
+            categories={facets.categories}
+            brands={facets.brands}
+            priceRange={facets.priceRange}
+            activeCategory={activeCategory?.slug ?? null}
+            activeBrand={activeBrand?.slug ?? null}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+          />
         </aside>
 
-        <div className="flex-1">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-              {search ? `Resultados para "${search}"` : activeCategory ? activeCategory.name : "Productos"}
-            </h1>
-            {!search && (
-              <p className="mt-1 text-sm text-gray-500">
-                {products.length} producto{products.length !== 1 ? "s" : ""} disponible{products.length !== 1 ? "s" : ""}
+        <div className="min-w-0 flex-1">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+                {search ? `"${search}"` : activeCategory ? activeCategory.name : brandSlug ? activeBrand?.name ?? "Productos" : "Productos"}
+              </h1>
+              <p className="text-sm text-gray-500">
+                {total} producto{total !== 1 ? "s" : ""}
+                {search && <> para &ldquo;{search}&rdquo;</>}
               </p>
-            )}
+            </div>
+            <SortSelect current={sort} />
           </div>
 
-          <div className="mb-6 -mx-4 overflow-x-auto px-4 lg:hidden">
-            <div className="flex gap-2 w-max">
-              <Link
-                href="/productos"
-                className={`shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium transition-colors ${
-                  !activeCategory
-                    ? "border-blue-600 bg-blue-600 text-white"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-600"
-                }`}
-              >
-                Todas
-              </Link>
-              {categories.map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={`/productos?categoria=${cat.slug}`}
-                  className={`shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium transition-colors ${
-                    activeCategory?.slug === cat.slug
-                      ? "border-blue-600 bg-blue-600 text-white"
-                      : "border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-600"
-                  }`}
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </div>
+          {activeFilters.length > 0 && (
+            <FilterChips filters={activeFilters} className="mb-4" />
+          )}
+
+          <div className="mb-4 lg:hidden">
+            <FilterSidebar
+              categories={facets.categories}
+              brands={facets.brands}
+              priceRange={facets.priceRange}
+              activeCategory={activeCategory?.slug ?? null}
+              activeBrand={activeBrand?.slug ?? null}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              mobile
+            />
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -144,17 +137,89 @@ export default async function StoreProductsPage({ searchParams }: Props) {
                 </svg>
               </div>
               <h2 className="text-lg font-semibold text-gray-900">No se encontraron productos</h2>
-              <p className="mt-1 text-sm text-gray-500">Intenta con otra categoría o término de búsqueda</p>
-              <Link
-                href="/productos"
-                className="btn-primary mt-6 gap-2"
-              >
+              <p className="mt-1 text-sm text-gray-500">Intenta con otros filtros o términos de búsqueda</p>
+              <Link href="/productos" className="btn-primary mt-6 gap-2">
                 Ver todos los productos
               </Link>
             </div>
           )}
+
+          {total > 20 && (
+            <Pagination current={page} total={total} searchParams={sp} />
+          )}
         </div>
       </div>
     </div>
+  )
+}
+
+async function Pagination({
+  current,
+  total,
+  searchParams,
+}: {
+  current: number
+  total: number
+  searchParams: Record<string, string | undefined>
+}) {
+  const totalPages = Math.ceil(total / 20)
+  if (totalPages <= 1) return null
+
+  function pageUrl(page: number) {
+    const params = new URLSearchParams()
+    for (const [k, v] of Object.entries(searchParams)) {
+      if (k !== "page" && v) params.set(k, v)
+    }
+    if (page > 1) params.set("page", String(page))
+    return `/productos${params.toString() ? `?${params.toString()}` : ""}`
+  }
+
+  const pages: (number | "...")[] = []
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= current - 1 && i <= current + 1)) {
+      pages.push(i)
+    } else if (pages[pages.length - 1] !== "...") {
+      pages.push("...")
+    }
+  }
+
+  return (
+    <nav className="mt-10 flex items-center justify-center gap-1.5" aria-label="Paginación">
+      {current > 1 && (
+        <Link
+          href={pageUrl(current - 1)}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-sm text-gray-500 transition-colors hover:bg-gray-100"
+        >
+          ←
+        </Link>
+      )}
+      {pages.map((p, i) =>
+        p === "..." ? (
+          <span key={`ellipsis-${i}`} className="flex h-9 w-9 items-center justify-center text-sm text-gray-400">
+            ...
+          </span>
+        ) : (
+          <Link
+            key={p}
+            href={pageUrl(p)}
+            className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+              p === current
+                ? "bg-blue-600 text-white"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            {p}
+          </Link>
+        )
+      )}
+      {current < totalPages && (
+        <Link
+          href={pageUrl(current + 1)}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-sm text-gray-500 transition-colors hover:bg-gray-100"
+        >
+          →
+        </Link>
+      )}
+    </nav>
   )
 }
