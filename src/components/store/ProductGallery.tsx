@@ -45,6 +45,7 @@ export function ProductGallery({ images }: ProductGalleryProps) {
                   src={img.url}
                   alt={img.alt}
                   fill
+                  priority={i === 0}
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />

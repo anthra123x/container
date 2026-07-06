@@ -10,7 +10,8 @@ export async function withRetry<T>(fn: () => Promise<T>, retries = 2): Promise<T
       return await fn()
     } catch (err) {
       if (i === retries) throw err
-      const isPoolError = String(err).includes("DriverAdapterError") || String(err).includes("timeout")
+      const errStr = String(err)
+      const isPoolError = errStr.includes("DriverAdapterError") || errStr.includes("timeout") || errStr.includes("Connection terminated") || errStr.includes("AuthenticationFailed")
       if (!isPoolError) throw err
       console.warn(`[DB] retry ${i + 1}/${retries} after error:`, (err as Error).message)
       await new Promise(r => setTimeout(r, 500 * (i + 1)))
@@ -26,8 +27,8 @@ function createPrismaClient() {
     connectionString: url,
     ssl: { rejectUnauthorized: false },
     max: 2,
-    idleTimeoutMillis: 8000,
-    connectionTimeoutMillis: 3000,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000,
     allowExitOnIdle: true,
   })
 

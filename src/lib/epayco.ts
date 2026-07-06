@@ -33,7 +33,7 @@ export async function createEpaycoCheckout(params: EpaycoCheckoutParams): Promis
     return { ok: false, error: "ePayco no configurado" }
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
 
   try {
     const body: Record<string, string> = {

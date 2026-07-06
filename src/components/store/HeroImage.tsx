@@ -6,11 +6,13 @@ import { useState } from "react"
 interface HeroImageProps {
   src?: string
   alt?: string
+  priority?: boolean
 }
 
 export function HeroImage({
   src = "/images/owner.png",
   alt = "Johan - Propietario de Container",
+  priority = false,
 }: HeroImageProps) {
   const [error, setError] = useState(false)
 
@@ -45,6 +47,7 @@ export function HeroImage({
           alt={alt}
           width={500}
           height={500}
+          priority={priority}
           onError={() => setError(true)}
           className="h-full w-full object-contain"
         />

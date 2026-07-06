@@ -42,8 +42,26 @@ export default async function StoreHome() {
     getCategories(),
   ])
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://container-store-seven.vercel.app"
+
+  const storeJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    name: "Container",
+    description: "Tu tienda de tecnología de confianza",
+    url: baseUrl,
+    image: `${baseUrl}/og-image.jpg`,
+    address: { "@type": "PostalAddress", addressCountry: "CO" },
+    priceRange: "$$",
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd) }}
+      />
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
         <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
@@ -97,7 +115,7 @@ export default async function StoreHome() {
               </div>
             </div>
             <div className="order-1 md:order-2 flex justify-center">
-              <HeroImage />
+              <HeroImage priority />
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useCallback } from "react"
-import { Plus, ImageIcon } from "lucide-react"
+import { ImageIcon } from "lucide-react"
 
 interface PreviewItem {
   id: string
@@ -46,6 +46,7 @@ export function ImagePreview() {
         <div className="mb-3 flex flex-wrap gap-3">
           {previews.map((p) => (
             <div key={p.id} className="h-24 w-24 overflow-hidden rounded-lg border bg-gray-50">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={p.preview}
                 alt={p.name}

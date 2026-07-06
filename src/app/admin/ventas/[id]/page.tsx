@@ -30,7 +30,6 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
     where: { storeId: order.storeId },
     select: { whatsappNumber: true, storeName: true },
   })
-  const adminWhatsApp = storeConfig?.whatsappNumber ? storeConfig.whatsappNumber.replace(/[^\d]/g, "") : null
   const customerPhone = order.customerPhone ? order.customerPhone.replace(/[^\d]/g, "") : null
 
   const validTransitions: Record<string, string[]> = {

@@ -1,6 +1,4 @@
-import { redirect } from "next/navigation"
 import { prisma } from "@/lib/db"
-import { auth } from "@/lib/auth"
 import { requireAdminRole } from "@/lib/auth-helpers"
 import { getSupabaseAdmin } from "@/lib/supabase-admin"
 import { supabase, STORAGE_BUCKET } from "@/lib/supabase"

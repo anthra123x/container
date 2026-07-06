@@ -2,15 +2,12 @@ import { redirect } from "next/navigation"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { requireAdminRole } from "@/lib/auth-helpers"
-import { getRoleLevel } from "@/lib/validations/user"
 
 export const dynamic = "force-dynamic"
 
 export default async function AdminConfigPage() {
   const session = await auth()
   if (!session?.user) redirect("/login")
-
-  const isSuperAdmin = getRoleLevel(session.user.role as string) >= 3
 
   const config = await prisma.storeConfiguration.findFirst({
     where: { storeId: session.user.storeId as string },

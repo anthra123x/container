@@ -13,6 +13,7 @@ import {
   Megaphone,
   Settings,
   Shield,
+  MessageSquare,
   ArrowLeft,
 } from "lucide-react"
 
@@ -55,6 +56,7 @@ const sidebarIcons: Record<string, React.ComponentType<{ className?: string }>> 
   Users,
   BarChart3,
   Megaphone,
+  MessageSquare,
   Settings,
   Shield,
 }
@@ -70,6 +72,7 @@ function AdminSidebar({ userRole }: { userRole: string }) {
     { href: "/admin/ventas", label: "Ventas", icon: "ShoppingCart" },
     { href: "/admin/clientes", label: "Clientes", icon: "Users" },
     { href: "/admin/reportes", label: "Reportes", icon: "BarChart3" },
+    { href: "/admin/resenas", label: "Reseñas", icon: "MessageSquare" },
     { href: "/admin/promociones", label: "Promociones", icon: "Megaphone" },
     ...(canManageUsers ? [{ href: "/admin/usuarios", label: "Usuarios", icon: "Shield" as const }] : []),
     { href: "/admin/configuracion", label: "Configuración", icon: "Settings" },

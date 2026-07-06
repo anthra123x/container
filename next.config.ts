@@ -47,6 +47,25 @@ const nextConfig: NextConfig = {
         source: "/(.*)",
         headers: securityHeaders,
       },
+      {
+        source: "/sitemap.xml",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=3600, s-maxage=3600" },
+        ],
+      },
+      {
+        source: "/robots.txt",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400, s-maxage=86400" },
+        ],
+      },
+      {
+        source: "/productos/:path*",
+        has: [{ type: "header", key: "accept", value: "text/html.*" }],
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=60, s-maxage=600, stale-while-revalidate=300" },
+        ],
+      },
     ]
   },
 }
@@ -57,6 +76,4 @@ export default withSentryConfig(nextConfig, {
   silent: !process.env.CI,
   widenClientFileUpload: true,
   sourcemaps: { deleteSourcemapsAfterUpload: true },
-  disableLogger: true,
-  automaticVercelMonitors: false,
 })

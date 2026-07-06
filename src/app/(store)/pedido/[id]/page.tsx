@@ -4,18 +4,19 @@ import Link from "next/link"
 import { prisma } from "@/lib/db"
 import { formatCurrency } from "@/lib/utils/formatters"
 import { SaveCartPhone } from "@/components/store/save-cart-phone"
-import { CheckCircle, CreditCard, MessageCircle, Package, ShoppingBag, XCircle } from "lucide-react"
+import { ReviewForm } from "@/components/store/ReviewForm"
+import { CheckCircle, CreditCard, MessageCircle, Package, ShoppingBag, XCircle, Star } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
 interface Props {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ payment?: string }>
+  searchParams: Promise<{ payment?: string; review?: string; error?: string }>
 }
 
 export default async function OrderConfirmationPage({ params, searchParams }: Props) {
   const { id } = await params
-  const { payment } = await searchParams
+  const { payment, review, error } = await searchParams
 
   const order = await prisma.order.findUnique({
     where: { id },
@@ -23,7 +24,7 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
       items: {
         include: {
           product: {
-            select: { name: true, slug: true, images: { where: { isPrimary: true }, take: 1 } },
+            select: { id: true, name: true, slug: true, images: { where: { isPrimary: true }, take: 1 } },
           },
         },
       },
@@ -37,6 +38,18 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
     select: { whatsappNumber: true, storeName: true, paymentInfo: true },
   })
 
+  const existingReviews = order.status === "DELIVERED"
+    ? await prisma.review.findMany({
+        where: {
+          orderId: order.id,
+          productId: { in: order.items.map((i) => i.product.id) },
+        },
+        select: { productId: true },
+      })
+    : []
+
+  const reviewedProductIds = new Set(existingReviews.map((r) => r.productId))
+
   const whatsappNumber = storeConfig?.whatsappNumber ?? "573000000000"
   const cleanPhone = whatsappNumber.replace(/[^\d]/g, "")
   const orderTag = `#${order.id.slice(0, 8)}`
@@ -48,6 +61,21 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
       <SaveCartPhone phone={order.customerPhone ?? ""} />
+
+      {review === "success" && (
+        <div className="mb-6 rounded-xl border border-green-200 bg-green-50 p-4 ring-1 ring-green-200">
+          <p className="text-sm font-medium text-green-800">
+            ¡Gracias por tu opinión! Será visible después de ser aprobada.
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 ring-1 ring-red-200">
+          <p className="text-sm font-medium text-red-800">{error}</p>
+        </div>
+      )}
+
       <div className="text-center">
         {paymentSuccess ? (
           <>
@@ -184,6 +212,43 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
               <MessageCircle className="h-5 w-5" />
               Contactar por WhatsApp
             </a>
+          </div>
+        )}
+
+        {order.status === "DELIVERED" && (
+          <div className="rounded-xl border bg-white p-6 ring-1 ring-foreground/5">
+            <div className="mb-4 flex items-center gap-2">
+              <Star className="h-5 w-5 text-amber-400" />
+              <h2 className="text-lg font-semibold">Califica tus productos</h2>
+            </div>
+            <p className="mb-4 text-sm text-muted-foreground">
+              Tu opinión ayuda a otros clientes a elegir mejor.
+            </p>
+
+            <div className="space-y-4">
+              {order.items.map((item) => (
+                <div key={item.id}>
+                  {reviewedProductIds.has(item.product.id) ? (
+                    <div className="rounded-lg border border-green-100 bg-green-50 p-3 text-sm text-green-700">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4" />
+                        <span className="font-medium">{item.productName}</span>
+                      </div>
+                      <p className="mt-1 text-xs">Ya calificaste este producto. Gracias.</p>
+                    </div>
+                  ) : (
+                    <ReviewForm
+                      productId={item.product.id}
+                      productName={item.productName}
+                      orderId={order.id}
+                      customerName={order.customerName ?? "Cliente"}
+                      phone={order.customerPhone ?? ""}
+                      productSlug={item.product.slug}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

@@ -141,7 +141,7 @@
   }
 
   .card-base {
-    @apply rounded-xl border bg-white shadow-sm;
+    @apply rounded-xl border bg-white ring-1 ring-foreground/5;
   }
 
   .nav-link {

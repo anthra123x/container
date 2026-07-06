@@ -4,10 +4,17 @@ import "./globals.css"
 import { AuthProvider } from "@/providers/session-provider"
 import { ThemeProvider } from "@/providers/theme-provider"
 import { QueryProvider } from "@/providers/query-provider"
+import { WebVitals } from "@/components/WebVitals"
 
-const geist = Geist({ subsets: ["latin"] })
+const geist = Geist({
+  subsets: ["latin"],
+  display: "swap",
+})
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ""
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://container-store-seven.vercel.app"),
   title: {
     default: "Container - Tienda de Tecnología",
     template: "%s | Container",
@@ -24,7 +31,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href={supabaseUrl} />
+        <link rel="dns-prefetch" href={supabaseUrl} />
+      </head>
       <body className={geist.className}>
+        <WebVitals />
         <AuthProvider>
           <ThemeProvider>
             <QueryProvider>

@@ -41,7 +41,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
 
       <form action={async (formData: FormData) => {
         "use server"
-        const currentSession = await requireAdminRole(2)
+        await requireAdminRole(2)
 
         const name = formData.get("name") as string
         const description = formData.get("description") as string

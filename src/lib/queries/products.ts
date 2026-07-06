@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db"
-import { slugify } from "@/lib/utils/formatters"
 import { Prisma } from "@prisma/client"
 
 export async function getFilteredProducts(params: {

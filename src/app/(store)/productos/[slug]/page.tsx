@@ -3,9 +3,11 @@ import Image from "next/image"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { prisma } from "@/lib/db"
+import { formatCurrency } from "@/lib/utils/formatters"
 import { Clock, Truck, Shield, ChevronRight } from "lucide-react"
 import { ProductGallery } from "@/components/store/ProductGallery"
 import { ProductActions } from "@/components/store/ProductActions"
+import { ReviewSection } from "@/components/store/ReviewSection"
 
 export const dynamic = "force-dynamic"
 
@@ -68,9 +70,37 @@ export default async function ProductDetailPage({ params }: Props) {
     ? Math.round((1 - Number(product.price) / Number(product.comparePrice)) * 100)
     : 0
   const isOutOfStock = product.stock <= 0
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://container-store-seven.vercel.app"
+  const productUrl = `${baseUrl}/productos/${product.slug}`
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.shortDescription ?? product.description ?? undefined,
+    image: product.images[0]?.url ?? undefined,
+    sku: product.sku ?? undefined,
+    brand: product.brand ? { "@type": "Brand", name: product.brand.name } : undefined,
+    offers: {
+      "@type": "Offer",
+      url: productUrl,
+      price: Number(product.price),
+      priceCurrency: "COP",
+      availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      ...(product.comparePrice && Number(product.comparePrice) > Number(product.price)
+        ? { priceValidUntil: new Date(Date.now() + 30 * 86400000).toISOString().split("T")[0] }
+        : {}),
+    },
+  }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="mx-auto max-w-7xl px-4 py-8">
       <nav className="mb-6 flex items-center gap-1 text-sm text-gray-500">
         <Link href="/" className="transition-colors hover:text-blue-600">Inicio</Link>
         <ChevronRight className="h-3.5 w-3.5" />
@@ -196,6 +226,9 @@ export default async function ProductDetailPage({ params }: Props) {
           )}
         </div>
       </div>
+
+      <ReviewSection productId={product.id} productSlug={product.slug} />
     </div>
+    </>
   )
 }
