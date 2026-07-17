@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import { Geist } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/providers/session-provider"
-import { ThemeProvider } from "@/providers/theme-provider"
 import { QueryProvider } from "@/providers/query-provider"
 import { WebVitals } from "@/components/WebVitals"
 
@@ -38,11 +37,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={geist.className}>
         <WebVitals />
         <AuthProvider>
-          <ThemeProvider>
-            <QueryProvider>
-              {children}
-            </QueryProvider>
-          </ThemeProvider>
+          <QueryProvider>
+            {children}
+          </QueryProvider>
         </AuthProvider>
       </body>
     </html>

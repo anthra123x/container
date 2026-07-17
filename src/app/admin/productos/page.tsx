@@ -1,7 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import { prisma } from "@/lib/db"
-import { auth } from "@/lib/auth"
 import { formatCurrency } from "@/lib/utils/formatters"
 import { SearchBar } from "@/components/admin/SearchBar"
 import { Pagination } from "@/components/admin/Pagination"
@@ -16,12 +15,10 @@ interface Props {
 
 export default async function AdminProductsPage({ searchParams }: Props) {
   const sp = await searchParams
-  const session = await auth()
-  const storeId = session?.user?.storeId ?? ""
   const page = Math.max(1, parseInt(sp.page ?? "1"))
   const search = sp.q
 
-  const where: Prisma.ProductWhereInput = { storeId }
+  const where: Prisma.ProductWhereInput = {}
 
   if (search) {
     where.OR = [
@@ -30,42 +27,30 @@ export default async function AdminProductsPage({ searchParams }: Props) {
     ]
   }
 
-  const [products, total, allProducts] = await Promise.all([
+  const [products, total] = await Promise.all([
     prisma.product.findMany({
       where,
       include: {
         category: true,
         images: { where: { isPrimary: true }, take: 1 },
-        _count: { select: { orderItems: true } },
       },
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
     }),
     prisma.product.count({ where }),
-    prisma.product.findMany({
-      where: { storeId },
-      select: { price: true, stock: true },
-    }),
   ])
-
-  const totalValue = allProducts.reduce((sum, p) => sum + Number(p.price) * p.stock, 0)
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Productos</h1>
-        <div className="flex items-center gap-3">
-          <p className="text-sm text-muted-foreground">
-            Valor inventario: <span className="font-medium text-foreground">{formatCurrency(totalValue)}</span>
-          </p>
-          <Link
-            href="/admin/productos/nuevo"
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            Nuevo Producto
-          </Link>
-        </div>
+        <Link
+          href="/admin/productos/nuevo"
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        >
+          Nuevo Producto
+        </Link>
       </div>
 
       <div className="flex items-center gap-4">
@@ -87,15 +72,14 @@ export default async function AdminProductsPage({ searchParams }: Props) {
               <th className="px-4 py-3 text-left text-sm font-medium">Precio</th>
               <th className="px-4 py-3 text-left text-sm font-medium">Stock</th>
               <th className="px-4 py-3 text-left text-sm font-medium">Estado</th>
-              <th className="px-4 py-3 text-left text-sm font-medium">Vendidos</th>
               <th className="px-4 py-3 text-right text-sm font-medium">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y">
             {products.map((product) => {
-              const stockStatus = product.stock <= 0 ? "out" : product.stock <= product.minStock ? "low" : "ok"
+              const stockStatus = product.stock <= 0 ? "out" : product.stock <= 5 ? "low" : "ok"
               return (
-                <tr key={product.id} className={`hover:bg-muted/50 ${product.stock <= 0 ? "bg-red-50/50" : product.stock <= product.minStock ? "bg-yellow-50/50" : ""}`}>
+                <tr key={product.id} className={`hover:bg-muted/50 ${product.stock <= 0 ? "bg-red-50/50" : product.stock <= 5 ? "bg-yellow-50/50" : ""}`}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="relative h-10 w-10 overflow-hidden rounded-md bg-muted">
@@ -145,7 +129,6 @@ export default async function AdminProductsPage({ searchParams }: Props) {
                       {product.isActive ? "Activo" : "Inactivo"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm">{product._count.orderItems}</td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/admin/productos/${product.id}`}

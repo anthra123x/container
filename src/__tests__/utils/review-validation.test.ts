@@ -4,7 +4,6 @@ import { createReviewSchema } from "@/lib/validations/review"
 describe("createReviewSchema", () => {
   const validData = {
     productId: "15f7365c-1e83-435a-b94b-7f3590ec08cd",
-    orderId: "abc12345-1e83-435a-b94b-7f3590ec08cd",
     customerName: "Juan Pérez",
     phone: "+57 300 123 4567",
     rating: 5,

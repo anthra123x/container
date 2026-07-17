@@ -4,9 +4,8 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { prisma } from "@/lib/db"
 import { formatCurrency } from "@/lib/utils/formatters"
-import { Clock, Truck, Shield, ChevronRight } from "lucide-react"
+import { Clock, Truck, Shield, ChevronRight, MessageCircle } from "lucide-react"
 import { ProductGallery } from "@/components/store/ProductGallery"
-import { ProductActions } from "@/components/store/ProductActions"
 import { ReviewSection } from "@/components/store/ReviewSection"
 
 export const dynamic = "force-dynamic"
@@ -56,22 +55,24 @@ export default async function ProductDetailPage({ params }: Props) {
         include: { images: { orderBy: { sortOrder: "asc" } } },
         orderBy: { sortOrder: "asc" },
       },
-      promotions: {
-        include: { promotion: true },
-        where: { promotion: { isActive: true, endsAt: { gte: new Date() } } },
-      },
     },
   })
 
   if (!product) notFound()
 
-  const hasDiscount = !!product.comparePrice && Number(product.comparePrice) > Number(product.price)
-  const discountPercentage = hasDiscount
-    ? Math.round((1 - Number(product.price) / Number(product.comparePrice)) * 100)
-    : 0
   const isOutOfStock = product.stock <= 0
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://container-store-seven.vercel.app"
   const productUrl = `${baseUrl}/productos/${product.slug}`
+
+  const config = await prisma.storeConfiguration.findFirst({
+    select: { whatsappNumber: true, whatsappMessage: true },
+  })
+  const whatsappNumber = config?.whatsappNumber?.replace(/[^\d]/g, "") ?? "573000000000"
+  const defaultMsg = config?.whatsappMessage ?? "Hola, me interesa este producto"
+  const whatsappMsg = encodeURIComponent(
+    `${defaultMsg}\n\n*${product.name}*${product.sku ? ` (${product.sku})` : ""}\n${formatCurrency(Number(product.price))}\n${productUrl}`
+  )
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMsg}`
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -87,9 +88,6 @@ export default async function ProductDetailPage({ params }: Props) {
       price: Number(product.price),
       priceCurrency: "COP",
       availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-      ...(product.comparePrice && Number(product.comparePrice) > Number(product.price)
-        ? { priceValidUntil: new Date(Date.now() + 30 * 86400000).toISOString().split("T")[0] }
-        : {}),
     },
   }
 
@@ -100,135 +98,164 @@ export default async function ProductDetailPage({ params }: Props) {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="mx-auto max-w-7xl px-4 py-8">
-      <nav className="mb-6 flex items-center gap-1 text-sm text-gray-500">
-        <Link href="/" className="transition-colors hover:text-blue-600">Inicio</Link>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <Link href={`/productos?categoria=${product.category.slug}`} className="transition-colors hover:text-blue-600">
-          {product.category.name}
-        </Link>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-gray-900">{product.name}</span>
-      </nav>
+      <div className="mx-auto max-w-7xl px-4 py-8 pt-24">
+        <nav className="mb-8 flex items-center gap-1 text-sm" style={{ color: "oklch(0.56 0.01 260)" }}>
+          <Link href="/" className="transition-colors" style={{ color: "oklch(0.56 0.01 260)" }} onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"} onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.56 0.01 260)"}>Inicio</Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <Link href={`/productos?categoria=${product.category.slug}`} className="transition-colors" style={{ color: "oklch(0.56 0.01 260)" }} onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"} onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.56 0.01 260)"}>
+            {product.category.name}
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <span style={{ color: "oklch(0.13 0.01 260)" }}>{product.name}</span>
+        </nav>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <div className="relative">
-          <ProductGallery
-            images={
-              product.images.length > 0
-                ? product.images.map((img) => ({
-                    url: img.url,
-                    alt: img.alt ?? product.name,
-                  }))
-                : [{ url: "", alt: product.name }]
-            }
-          />
-          {hasDiscount && (
-            <div className="absolute left-4 top-4 z-10 rounded-full bg-red-500 px-3 py-1.5 text-sm font-bold text-white shadow-lg">
-              -{discountPercentage}%
-            </div>
-          )}
-          {isOutOfStock && (
-            <div className="overlay-outofstock">
-              <span className="rounded-xl bg-white/95 px-6 py-3 text-base font-semibold text-gray-900 shadow-xl">
-                Agotado
-              </span>
-            </div>
-          )}
-        </div>
-
-        <div>
-          <div className="mb-1 flex items-center gap-2">
-            <span className="text-xs font-medium uppercase tracking-wider text-blue-600">
-              {product.category.name}
-            </span>
-            {product.brand && (
-              <>
-                <span className="text-gray-300">|</span>
-                <span className="text-xs text-gray-500">{product.brand.name}</span>
-              </>
+        <div className="grid gap-10 lg:grid-cols-2">
+          <div className="relative">
+            <ProductGallery
+              images={
+                product.images.length > 0
+                  ? product.images.map((img) => ({
+                      url: img.url,
+                      alt: img.alt ?? product.name,
+                    }))
+                  : [{ url: "", alt: product.name }]
+              }
+            />
+            {isOutOfStock && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center" style={{ background: "oklch(0.13 0.01 260 / 0.3)" }}>
+                <span className="rounded-xl px-6 py-3 text-base font-semibold shadow-xl" style={{ background: "oklch(0.99 0.002 260 / 0.95)", color: "oklch(0.13 0.01 260)" }}>
+                  Agotado
+                </span>
+              </div>
             )}
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
-            {product.name}
-          </h1>
 
-          {product.shortDescription && (
-            <p className="mt-4 leading-relaxed text-gray-600">{product.shortDescription}</p>
-          )}
+          <div className="space-y-6">
+            <div>
+              <div className="mb-2 flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "oklch(0.55 0.18 255)" }}>
+                  {product.category.name}
+                </span>
+                {product.brand && (
+                  <>
+                    <span style={{ color: "oklch(0.92 0.004 260)" }}>|</span>
+                    <span className="text-xs" style={{ color: "oklch(0.56 0.01 260)" }}>{product.brand.name}</span>
+                  </>
+                )}
+              </div>
+              <h1 className="text-3xl font-bold tracking-tight md:text-4xl" style={{ color: "oklch(0.13 0.01 260)" }}>
+                {product.name}
+              </h1>
 
-          <ProductActions
-            productId={product.id}
-            name={product.name}
-            slug={product.slug}
-            price={Number(product.price)}
-            baseStock={product.stock}
-            variants={product.variants.map((v) => ({
-              id: v.id,
-              name: v.value,
-              type: v.type,
-              value: v.value,
-              price: v.price?.toString() ?? null,
-              stock: v.stock ?? null,
-              image: v.image,
-            }))}
-            hasDiscount={hasDiscount}
-            comparePrice={product.comparePrice ? Number(product.comparePrice) : null}
-            discountPercentage={discountPercentage}
-          />
-
-          <div className="mt-8 flex flex-wrap items-center gap-4 rounded-xl bg-gray-50 p-4 text-sm text-gray-500 md:gap-6">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              <span>24-48h</span>
+              {product.shortDescription && (
+                <p className="mt-4 leading-relaxed" style={{ color: "oklch(0.45 0.01 260)" }}>{product.shortDescription}</p>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              <span>Garantía</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Truck className="h-4 w-4" />
-              <span>Envío gratis</span>
-            </div>
-          </div>
 
-          {product.description && (
-            <div className="mt-8 border-t border-gray-100 pt-6">
-              <h2 className="mb-3 text-base font-semibold text-gray-900">Descripción</h2>
-              <div className="prose prose-sm max-w-none leading-relaxed text-gray-600">
-                {product.description}
+            <div className="glass-panel-strong rounded-2xl p-6">
+              <p className="text-3xl font-bold" style={{ color: "oklch(0.55 0.18 255)" }}>
+                {formatCurrency(Number(product.price))}
+              </p>
+
+              <div className="mt-5 flex flex-wrap items-center gap-4 text-sm md:gap-6" style={{ color: "oklch(0.56 0.01 260)" }}>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  <span>24-48h</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  <span>Garantía</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Truck className="h-4 w-4" />
+                  <span>Envío gratis</span>
+                </div>
               </div>
             </div>
-          )}
 
-          {product.galleries.length > 0 && (
-            <div className="mt-8 border-t border-gray-100 pt-6">
-              <h2 className="mb-4 text-base font-semibold text-gray-900">Galerías</h2>
-              {product.galleries.map((gallery) => (
-                <div key={gallery.id} className="mb-6">
-                  <h3 className="mb-2 text-sm font-medium text-gray-700">{gallery.name}</h3>
-                  <div className="grid grid-cols-3 gap-3">
-                    {gallery.images.map((img) => (
-                      <div key={img.id} className="relative aspect-square overflow-hidden rounded-xl bg-gray-50 ring-1 ring-gray-200">
-                        <Image
-                          src={img.url}
-                          alt={img.alt ?? product.name}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 640px) 33vw, 25vw"
-                        />
-                      </div>
-                    ))}
-                  </div>
+            {product.variants.length > 0 && (
+              <div>
+                <h3 className="mb-3 text-sm font-medium" style={{ color: "oklch(0.13 0.01 260)" }}>Opciones disponibles</h3>
+                <div className="flex flex-wrap gap-2">
+                  {product.variants.map((v) => (
+                    <span
+                      key={v.id}
+                      className="rounded-lg px-3 py-1.5 text-sm"
+                      style={{
+                        border: "1px solid oklch(0.92 0.004 260)",
+                        color: "oklch(0.45 0.01 260)",
+                        background: "oklch(1 0 0 / 0.5)",
+                      }}
+                    >
+                      {v.value}
+                    </span>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+              </div>
+            )}
 
-      <ReviewSection productId={product.id} productSlug={product.slug} />
-    </div>
+            <div className="!mt-8">
+              <div className="glass-panel rounded-2xl overflow-hidden">
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-center justify-center gap-3 px-6 py-4 text-base font-semibold text-white transition-all active:scale-[0.98]"
+                  style={{
+                    background: "linear-gradient(135deg, #25D366, #128C7E)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "linear-gradient(135deg, #20b038, #0e7a6a)"
+                    e.currentTarget.style.boxShadow = "0 8px 24px rgba(37, 211, 102, 0.35)"
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "linear-gradient(135deg, #25D366, #128C7E)"
+                    e.currentTarget.style.boxShadow = "none"
+                  }}
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  Comprar por WhatsApp
+                </a>
+              </div>
+            </div>
+
+            {product.description && (
+              <div className="!mt-10 border-t pt-6" style={{ borderColor: "oklch(0.92 0.004 260)" }}>
+                <h2 className="mb-3 text-base font-semibold" style={{ color: "oklch(0.13 0.01 260)" }}>Descripción</h2>
+                <div className="prose prose-sm max-w-none leading-relaxed" style={{ color: "oklch(0.45 0.01 260)" }}>
+                  {product.description}
+                </div>
+              </div>
+            )}
+
+            {product.galleries.length > 0 && (
+              <div className="!mt-10 border-t pt-6" style={{ borderColor: "oklch(0.92 0.004 260)" }}>
+                <h2 className="mb-4 text-base font-semibold" style={{ color: "oklch(0.13 0.01 260)" }}>Galerías</h2>
+                {product.galleries.map((gallery) => (
+                  <div key={gallery.id} className="mb-6">
+                    <h3 className="mb-2 text-sm font-medium" style={{ color: "oklch(0.45 0.01 260)" }}>{gallery.name}</h3>
+                    <div className="grid grid-cols-3 gap-3">
+                      {gallery.images.map((img) => (
+                        <div key={img.id} className="relative aspect-square overflow-hidden rounded-xl" style={{ background: "oklch(0.96 0.004 260)", boxShadow: "inset 0 0 0 1px oklch(0.92 0.004 260)" }}>
+                          <Image
+                            src={img.url}
+                            alt={img.alt ?? product.name}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 640px) 33vw, 25vw"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <ReviewSection productId={product.id} productSlug={product.slug} />
+      </div>
     </>
   )
 }

@@ -1,8 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useCallback, useEffect, useState } from "react"
-import useEmblaCarousel from "embla-carousel-react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface ProductGalleryProps {
@@ -10,53 +9,58 @@ interface ProductGalleryProps {
 }
 
 export function ProductGallery({ images }: ProductGalleryProps) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false })
+  const trackRef = useRef<HTMLDivElement>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
-  const [canScrollPrev, setCanScrollPrev] = useState(false)
-  const [canScrollNext, setCanScrollNext] = useState(false)
+
+  const updateIndex = useCallback(() => {
+    if (!trackRef.current) return
+    const track = trackRef.current
+    const index = Math.round(track.scrollLeft / track.clientWidth)
+    setSelectedIndex(index)
+  }, [])
 
   useEffect(() => {
-    if (!emblaApi) return
-    const onSelect = () => {
-      setSelectedIndex(emblaApi.selectedScrollSnap())
-      setCanScrollPrev(emblaApi.canScrollPrev())
-      setCanScrollNext(emblaApi.canScrollNext())
-    }
-    emblaApi.on("select", onSelect)
-    return () => {
-      emblaApi.off("select", onSelect)
-    }
-  }, [emblaApi])
+    const track = trackRef.current
+    if (!track) return
+    track.addEventListener("scroll", updateIndex, { passive: true })
+    return () => track.removeEventListener("scroll", updateIndex)
+  }, [updateIndex])
 
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
-  const scrollTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi])
+  const scrollTo = useCallback((i: number) => {
+    trackRef.current?.children[i]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })
+  }, [])
+
+  const scrollPrev = useCallback(() => {
+    if (selectedIndex > 0) scrollTo(selectedIndex - 1)
+  }, [selectedIndex, scrollTo])
+
+  const scrollNext = useCallback(() => {
+    if (selectedIndex < images.length - 1) scrollTo(selectedIndex + 1)
+  }, [selectedIndex, images.length, scrollTo])
 
   if (images.length === 0) return null
 
   return (
     <div>
       <div className="relative aspect-square overflow-hidden rounded-2xl bg-gray-50 shadow-sm ring-1 ring-gray-100">
-        <div ref={emblaRef} className="h-full overflow-hidden">
-          <div className="flex h-full">
-            {images.map((img, i) => (
-              <div key={i} className="relative min-w-0 flex-[0_0_100%]">
-                <Image
-                  src={img.url}
-                  alt={img.alt}
-                  fill
-                  priority={i === 0}
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
-            ))}
-          </div>
+        <div ref={trackRef} className="flex h-full snap-x snap-mandatory overflow-x-auto scrollbar-none">
+          {images.map((img, i) => (
+            <div key={i} className="relative min-w-0 flex-[0_0_100%] snap-start">
+              <Image
+                src={img.url}
+                alt={img.alt}
+                fill
+                priority={i === 0}
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+          ))}
         </div>
 
         {images.length > 1 && (
           <>
-            {canScrollPrev && (
+            {selectedIndex > 0 && (
               <button
                 onClick={scrollPrev}
                 className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 text-gray-800 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl active:scale-95"
@@ -64,7 +68,7 @@ export function ProductGallery({ images }: ProductGalleryProps) {
                 <ChevronLeft className="h-5 w-5" />
               </button>
             )}
-            {canScrollNext && (
+            {selectedIndex < images.length - 1 && (
               <button
                 onClick={scrollNext}
                 className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 text-gray-800 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl active:scale-95"

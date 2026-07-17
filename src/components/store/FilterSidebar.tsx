@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import { useCallback, useState, useRef, useEffect } from "react"
+import { useState } from "react"
 import { SlidersHorizontal, X } from "lucide-react"
 
 interface FacetItem {
@@ -106,8 +106,15 @@ export function FilterSidebar({
   }
 
   return (
-    <div className="sticky top-6 space-y-5">
-      <div className="rounded-xl border bg-white p-5 ring-1 ring-foreground/5">
+    <div className="sticky top-24 space-y-5">
+      <div
+        className="rounded-2xl p-5"
+        style={{
+          background: "oklch(0.99 0.002 260)",
+          boxShadow: "0 1px 0 oklch(1 0 0 / 0.4), 0 4px 24px oklch(0.13 0.01 260 / 0.05)",
+          border: "1px solid oklch(1 0 0 / 0.6)",
+        }}
+      >
         <FilterContent
           categories={categories}
           brands={brands}
@@ -154,7 +161,7 @@ function FilterContent({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest" style={{ color: "oklch(0.56 0.01 260)" }}>
           Categorías
         </h3>
         <div className="space-y-0.5">
@@ -178,7 +185,7 @@ function FilterContent({
 
       {brands.length > 0 && (
         <div>
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest" style={{ color: "oklch(0.56 0.01 260)" }}>
             Marcas
           </h3>
           <div className="space-y-0.5">
@@ -202,7 +209,7 @@ function FilterContent({
       )}
 
       <div>
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest" style={{ color: "oklch(0.56 0.01 260)" }}>
           Precio
         </h3>
         <div className="flex items-center gap-2">
@@ -211,20 +218,34 @@ function FilterContent({
             value={priceMin}
             onChange={(e) => setPriceMin(e.target.value)}
             placeholder={`$${priceRange.min.toLocaleString()}`}
-            className="w-full rounded-lg border px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-lg px-3 py-1.5 text-sm outline-none transition-colors"
+            style={{
+              border: "1px solid oklch(0.92 0.004 260)",
+              background: "oklch(1 0 0 / 0.5)",
+              color: "oklch(0.13 0.01 260)",
+            }}
           />
-          <span className="text-xs text-gray-400">—</span>
+          <span className="text-xs" style={{ color: "oklch(0.56 0.01 260)" }}>—</span>
           <input
             type="number"
             value={priceMax}
             onChange={(e) => setPriceMax(e.target.value)}
             placeholder={`$${priceRange.max.toLocaleString()}`}
-            className="w-full rounded-lg border px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-lg px-3 py-1.5 text-sm outline-none transition-colors"
+            style={{
+              border: "1px solid oklch(0.92 0.004 260)",
+              background: "oklch(1 0 0 / 0.5)",
+              color: "oklch(0.13 0.01 260)",
+            }}
           />
         </div>
         <button
           onClick={applyPrice}
-          className="mt-2 w-full rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200"
+          className="mt-2 w-full rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
+          style={{
+            background: "oklch(0.55 0.18 255 / 0.1)",
+            color: "oklch(0.55 0.18 255)",
+          }}
         >
           Aplicar
         </button>
@@ -249,12 +270,28 @@ function FilterLink({
       href={href}
       className={`flex items-center justify-between rounded-lg px-3 py-1.5 text-sm transition-colors ${
         active
-          ? "bg-blue-50 font-medium text-blue-600"
-          : "text-gray-600 hover:bg-gray-50 hover:text-blue-600"
+          ? "font-medium"
+          : ""
       }`}
+      style={{
+        color: active ? "oklch(0.55 0.18 255)" : "oklch(0.45 0.01 260)",
+        background: active ? "oklch(0.55 0.18 255 / 0.08)" : "transparent",
+      }}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = "oklch(0.55 0.18 255 / 0.05)"
+          e.currentTarget.style.color = "oklch(0.55 0.18 255)"
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = "transparent"
+          e.currentTarget.style.color = "oklch(0.45 0.01 260)"
+        }
+      }}
     >
       <span>{label}</span>
-      <span className={`text-xs ${active ? "text-blue-400" : "text-gray-400"}`}>
+      <span className="text-xs" style={{ color: active ? "oklch(0.55 0.18 255 / 0.6)" : "oklch(0.56 0.01 260)" }}>
         {count}
       </span>
     </a>

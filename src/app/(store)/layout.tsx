@@ -27,22 +27,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
   const config = await prisma.storeConfiguration.findFirst({
-    select: {
-      whatsappNumber: true,
-      storeName: true,
-      email: true,
-      phone: true,
-    },
+    select: { whatsappNumber: true, storeName: true, email: true, phone: true },
   })
 
-  const whatsappNumber = config?.whatsappNumber?.replace(/[^\d]/g, "") ?? "573000000000"
   const storeName = config?.storeName ?? "Container"
   const email = config?.email ?? "ventas@container.co"
   const phone = config?.phone ?? "+57 300 000 0000"
 
   return (
     <StoreLayoutClient
-      config={{ whatsappNumber, storeName, email, phone }}
+      config={{ whatsappNumber: config?.whatsappNumber?.replace(/[^\d]/g, "") ?? "573000000000", storeName, email, phone }}
     >
       {children}
     </StoreLayoutClient>

@@ -74,10 +74,6 @@ export async function getProductBySlug(slug: string) {
       },
       category: true,
       brand: true,
-      promotions: {
-        include: { promotion: true },
-        where: { promotion: { isActive: true, endsAt: { gte: new Date() } } },
-      },
     },
   })
 }

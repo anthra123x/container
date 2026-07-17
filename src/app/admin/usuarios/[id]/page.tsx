@@ -19,10 +19,8 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
 
   if (currentLevel < 3) redirect("/admin")
 
-  const storeId = session.user.storeId as string
-
-  const user = await prisma.user.findFirst({
-    where: { id: userId, storeId },
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
   })
 
   if (!user) notFound()
@@ -91,7 +89,7 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
     }
 
     const emailExists = await prisma.user.findFirst({
-      where: { email: parsed.data.email, id: { not: userId }, storeId },
+      where: { email: parsed.data.email, id: { not: userId } },
     })
     if (emailExists) {
       redirect(`/admin/usuarios/${userId}?error_email=Este email ya está en uso por otro usuario`)

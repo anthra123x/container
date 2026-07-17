@@ -28,7 +28,6 @@ export default async function NewUserPage() {
     const currentSession = await requireAdminRole(3)
     const currRole = currentSession.user.role as string
     const currLevel = getRoleLevel(currRole)
-    const currStoreId = currentSession.user.storeId as string
 
     const raw = {
       name: formData.get("name") as string,
@@ -66,7 +65,6 @@ export default async function NewUserPage() {
 
     await prisma.user.create({
       data: {
-        storeId: currStoreId,
         name: parsed.data.name,
         email: parsed.data.email,
         passwordHash,

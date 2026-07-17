@@ -30,7 +30,13 @@ export function SortSelect({ current }: { current: string }) {
     <select
       value={current}
       onChange={(e) => handleChange(e.target.value)}
-      className="rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:ring-2 focus:ring-blue-500"
+      className="rounded-xl px-4 py-2.5 text-sm outline-none transition-all"
+      style={{
+        border: "1px solid oklch(0.92 0.004 260)",
+        background: "oklch(0.99 0.002 260)",
+        color: "oklch(0.13 0.01 260)",
+        boxShadow: "0 1px 0 oklch(1 0 0 / 0.4)",
+      }}
       aria-label="Ordenar por"
     >
       {OPTIONS.map((opt) => (

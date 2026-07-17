@@ -22,10 +22,11 @@ export async function withRetry<T>(fn: () => Promise<T>, retries = 2): Promise<T
 
 function createPrismaClient() {
   const url = process.env.DATABASE_URL!
+  const isLocal = url.includes("localhost") || url.includes("127.0.0.1")
 
   const pool = new pg.Pool({
     connectionString: url,
-    ssl: { rejectUnauthorized: false },
+    ssl: isLocal ? false : { rejectUnauthorized: false },
     max: 2,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,

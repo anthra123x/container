@@ -1,7 +1,5 @@
 "use client"
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { signIn } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
 import { loginSchema, type LoginInput } from "@/lib/validations/auth"
@@ -11,30 +9,46 @@ export function LoginForm() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") ?? "/admin"
   const [error, setError] = useState<string>()
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof LoginInput, string>>>({})
+  const [submitting, setSubmitting] = useState(false)
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-  })
-
-  async function onSubmit(data: LoginInput) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     setError(undefined)
+    setFieldErrors({})
 
-    const result = await signIn("credentials", {
-      email: data.email,
-      password: data.password,
+    const form = new FormData(e.currentTarget)
+    const data: LoginInput = {
+      email: form.get("email") as string,
+      password: form.get("password") as string,
+    }
+
+    const result = loginSchema.safeParse(data)
+    if (!result.success) {
+      const flat = result.error.flatten().fieldErrors
+      setFieldErrors({
+        email: flat.email?.[0],
+        password: flat.password?.[0],
+      })
+      return
+    }
+
+    setSubmitting(true)
+
+    const signInResult = await signIn("credentials", {
+      email: result.data.email,
+      password: result.data.password,
       redirect: false,
     })
 
-    if (result?.error === "LOCKOUT") {
+    setSubmitting(false)
+
+    if (signInResult?.error === "LOCKOUT") {
       setError("Demasiados intentos. Cuenta bloqueada por 15 minutos.")
       return
     }
 
-    if (result?.error) {
+    if (signInResult?.error) {
       setError("Credenciales inválidas")
       return
     }
@@ -43,7 +57,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
         <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
           {error}
@@ -56,13 +70,13 @@ export function LoginForm() {
         </label>
         <input
           id="email"
+          name="email"
           type="email"
           className="input-field"
           placeholder="admin@container.com"
-          {...register("email")}
         />
-        {errors.email && (
-          <p className="text-xs text-red-500">{errors.email.message}</p>
+        {fieldErrors.email && (
+          <p className="text-xs text-red-500">{fieldErrors.email}</p>
         )}
       </div>
 
@@ -72,22 +86,22 @@ export function LoginForm() {
         </label>
         <input
           id="password"
+          name="password"
           type="password"
           className="input-field"
           placeholder="••••••••"
-          {...register("password")}
         />
-        {errors.password && (
-          <p className="text-xs text-red-500">{errors.password.message}</p>
+        {fieldErrors.password && (
+          <p className="text-xs text-red-500">{fieldErrors.password}</p>
         )}
       </div>
 
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={submitting}
         className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
       >
-        {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
+        {submitting ? "Iniciando sesión..." : "Iniciar sesión"}
       </button>
     </form>
   )

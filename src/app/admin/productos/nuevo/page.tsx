@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { requireAdminRole } from "@/lib/auth-helpers"
 import { uploadProductImages } from "@/lib/actions/product-images"
 import { ImagePreview } from "@/components/admin/ImagePreview"
 
@@ -24,8 +23,6 @@ export default async function NewProductPage() {
 
       <form action={async (formData: FormData) => {
         "use server"
-        const currentSession = await requireAdminRole(2)
-
         const name = formData.get("name") as string
         const description = formData.get("description") as string
         const price = parseFloat(formData.get("price") as string)
@@ -47,7 +44,6 @@ export default async function NewProductPage() {
             sku: sku || null,
             categoryId,
             brandId: brandId || null,
-            storeId: currentSession.user.storeId ?? "",
             isActive: true,
           },
         })

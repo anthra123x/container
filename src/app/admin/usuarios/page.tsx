@@ -33,9 +33,7 @@ export default async function AdminUsersPage() {
     redirect("/admin")
   }
 
-  const storeId = session.user.storeId as string
   const users = await prisma.user.findMany({
-    where: { storeId },
     orderBy: [{ role: "asc" }, { name: "asc" }],
   })
 

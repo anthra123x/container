@@ -1,213 +1,271 @@
 ---
 name: Container Store
-description: Tienda colombiana de tecnología — premium, limpia, segura
+description: Galería premium colombiana de tecnología — Liquid Glass, producto como protagonista
 colors:
-  primary: oklch(0.546 0.245 262.881)
-  primary-hover: oklch(0.6 0.22 262.881)
-  primary-foreground: oklch(0.985 0 0)
-  background: oklch(1 0 0)
-  foreground: oklch(0.145 0 0)
-  muted: oklch(0.97 0 0)
-  muted-foreground: oklch(0.556 0 0)
-  border: oklch(0.922 0 0)
-  card: oklch(1 0 0)
-  card-foreground: oklch(0.145 0 0)
-  destructive: oklch(0.577 0.245 27.325)
-  sidebar: oklch(0.985 0 0)
-  sidebar-foreground: oklch(0.145 0 0)
-  sidebar-primary: oklch(0.546 0.245 262.881)
-  chart-1: oklch(0.87 0 0)
+  accent: oklch(0.55 0.18 255)
+  accent-soft: oklch(0.9 0.04 255)
+  ink: oklch(0.13 0.01 260)
+  surface: oklch(0.99 0.002 260)
+  muted-surface: oklch(0.96 0.004 260)
+  muted-ink: oklch(0.56 0.01 260)
+  subtle-ink: oklch(0.45 0.01 260)
+  boundary: oklch(0.92 0.004 260)
+  glass-bg: oklch(1 0 0 / 0.6)
+  glass-border: oklch(1 0 0 / 0.8)
+  glass-highlight: oklch(1 0 0 / 0.5)
+  glass-shadow: oklch(0.13 0.01 260 / 0.06)
 typography:
   display:
     fontFamily: var(--font-sans)
     fontWeight: 700
-    lineHeight: 1
+    lineHeight: 1.05
+    letterSpacing: -0.04em
+  heading:
+    fontFamily: var(--font-sans)
+    fontWeight: 700
+    lineHeight: 1.15
+    letterSpacing: -0.03em
   body:
     fontFamily: var(--font-sans)
     fontSize: 0.875rem
-    lineHeight: 1.5
+    lineHeight: 1.6
+    color: oklch(0.45 0.01 260)
   label:
     fontFamily: var(--font-sans)
     fontSize: 0.75rem
-    fontWeight: 500
-    letterSpacing: 0.05em
+    fontWeight: 600
+    letterSpacing: 0.1em
+    textTransform: uppercase
+  caption:
+    fontFamily: var(--font-sans)
+    fontSize: 0.75rem
+    color: oklch(0.56 0.01 260)
 rounded:
-  sm: 4.8px
-  md: 6.4px
-  lg: 8px
-  xl: 11.2px
-  2xl: 14.4px
-  3xl: 17.6px
-  4xl: 20.8px
+  default: 0.625rem
+  lg: 0.75rem
+  xl: 1rem
+  2xl: 1.25rem
+corner:
+  button: 0.75rem
+  card: 1.25rem
+  panel: 1.25rem
+  input: 0.625rem
+  badge: 9999px
+glass:
+  background: oklch(1 0 0 / 0.6)
+  blur: 16px
+  border: 1px solid oklch(1 0 0 / 0.8)
+  highlight: inset 0 1px 0 oklch(1 0 0 / 0.5)
+  shadow: 0 4px 24px oklch(0.13 0.01 260 / 0.06)
+  strong-bg: oklch(1 0 0 / 0.75)
+  strong-blur: 24px
+  strong-shadow: 0 8px 32px oklch(0.13 0.01 260 / 0.08)
+animation:
+  default-duration: 0.6s
+  default-easing: cubic-bezier(0.16, 1, 0.3, 1)
+  press-scale: 0.97
+nav:
+  height: 64px
+  bg-blur: 20px
 spacing:
-  xs: 4px
-  sm: 8px
-  md: 16px
-  lg: 24px
-  xl: 32px
-  2xl: 48px
-  3xl: 64px
-components:
-  button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.primary-foreground}"
-    rounded: "{rounded.xl}"
-    padding: 12px 24px
-    typography: "{typography.label}"
-  button-outline:
-    backgroundColor: transparent
-    textColor: "{colors.foreground}"
-    rounded: "{rounded.lg}"
-    padding: 8px 20px
-  card-default:
-    backgroundColor: "{colors.card}"
-    rounded: "{rounded.xl}"
-    typography: "{typography.body}"
-  input-default:
-    backgroundColor: transparent
-    rounded: "{rounded.lg}"
-    padding: 10px 16px
-    typography: "{typography.body}"
-  badge-default:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.primary-foreground}"
-    rounded: "{rounded.4xl}"
-    padding: 2px 10px
-    typography: "{typography.label}"
+  section: 5rem
+  section-inner: 1.5rem
 ---
 
-# Design System: Container Store
+# Design System: Container — Liquid Glass
 
 ## 1. Overview
 
-**Creative North Star: "El Estante Abierto"** — una tienda donde cada producto descansa en su propio espacio, visible, ordenado, sin ruido. La interfaz es el estante: fondo limpio, producto protagonista, todo al alcance.
+**Creative North Star: "Vitrina de Cristal"** — cada producto reposa en una vitrina invisible de vidrio líquido. La interfaz es la vitrina: el fondo se desvanece, el producto emerge con claridad absoluta, la luz lo atraviesa.
 
-Container Store es tecnología con confianza colombiana. La UI comunica seguridad y orden sin ser fría. Cada página respira — el whitespace no es vacío, es el marco que permite que el producto hable. Los azules serenos (herencia directa del océano y el cielo de la costa Caribe) combinados con blanco nítido y grises suaves crean una atmósfera profesional pero cercana.
+Container es una galería premium de productos tecnológicos. La venta se concreta por WhatsApp. No hay checkout, no hay carrito, no hay cuentas. El producto es el protagonista absoluto.
 
-Este sistema rechaza explícitamente lo genérico y lo sobrecargado. Sin sombras excesivas, sin gradientes agresivos, sin cards apilados sin jerarquía. La elevación se resuelve con anillos (`ring-1`) en vez de sombras.
+La estética Liquid Glass toma principios del diseño industrial de Apple: superficies translúcidas con `backdrop-filter`, bordes con highlight interno que simulan refracción de luz, sombras tintadas al tono del fondo, tipografía bold como único acento gráfico.
 
 **Key Characteristics:**
-- Plano por defecto, anillos para definir superficies
-- Azul como único acento cromático (≤15% de la pantalla)
-- Whitespace generoso como elemento de diseño
-- Motion sutil (3-4/10), solo para explicar cambios de estado
-- Consistencia radical en radios, espaciados y tipografía
+- Producto como protagonista, no la interfaz
+- Liquid Glass: backdrop-blur + bordes translúcidos + highlight interno
+- Acero-azul (steel blue) como único acento cromático (oklch 0.55 0.18 255)
+- Fondos limpios con micro-tono frío (no beige, no crema)
+- Geist como única familia tipográfica
+- Espaciado generoso (secciones de 5rem/80px)
+- Animaciones entrada con cubic-bezier(0.16, 1, 0.3, 1) — elástico pero contenidas
 
 ## 2. Colors
 
-La paleta es monocromática azul + neutrales. El azul es el único acento. Su presencia medida es lo que le da potencia.
+La paleta es acero-azul sobre neutros fríos. Sin beige, sin crema, sin tonos cálidos.
 
-### Primary
-- **Azul Container** (`oklch(0.546 0.245 262.881)` / `oklch(0.6 0.22 262.881)` hover): El azul de marca. Usado en botones primarios, links, acentos activos, y el header hero. Nunca en fondos grandes (máximo 15% de la pantalla).
-- **Primary Foreground** (`oklch(0.985 0 0)`): Blanco puro. Texto sobre primary.
+### Accent
+- **Acero Azul** (`oklch(0.55 0.18 255)`): Único acento cromático. Botones, links, iconos, acentos activos.
+- **Accent Soft** (`oklch(0.9 0.04 255)`): Fondos de hover y estados secundarios del acento.
 
-### Neutral
-- **Background** (`oklch(1 0 0)`): Blanco total. Fondo de página principal.
-- **Foreground** (`oklch(0.145 0 0)`): Casi negro. Texto principal.
-- **Muted** (`oklch(0.97 0 0)`): Gris apenas perceptible. Hover states, fondos de sección alternos (ej: "Productos Destacados").
-- **Muted Foreground** (`oklch(0.556 0 0)`): Gris medio. Texto secundario, descripciones, metadata.
-- **Border** (`oklch(0.922 0 0)`): Gris muy claro. Bordes de inputs, separadores, ring de cards.
-- **Card** (`oklch(1 0 0)`): Blanco. Fondo de cards.
+### Neutral Frío
+- **Surface** (`oklch(0.99 0.002 260)`): Fondo de página. Casi blanco con micro-tono frío.
+- **Muted Surface** (`oklch(0.96 0.004 260)`): Secciones alternas, fondos de tarjetas de sumario.
+- **Ink** (`oklch(0.13 0.01 260)`): Casi negro. Texto principal, títulos.
+- **Muted Ink** (`oklch(0.56 0.01 260)`): Gris frío medio. Texto secundario, metadata.
+- **Subtle Ink** (`oklch(0.45 0.01 260)`): Gris frío oscuro. Body text, descripciones.
+- **Boundary** (`oklch(0.92 0.004 260)`): Gris frío claro. Bordes, separadores.
 
-### Semantic
-- **Destructive** (`oklch(0.577 0.245 27.325)`): Rojo. Acciones destructivas, descuentos, errores, stock agotado.
+### Glass Tokens
+- **glass-bg**: `oklch(1 0 0 / 0.6)` — Fondo translúcido para paneles glass
+- **glass-border**: `oklch(1 0 0 / 0.8)` — Borde blanco semi-opaco
+- **glass-highlight**: `oklch(1 0 0 / 0.5)` — Highlight interno para simular refracción
+- **glass-shadow**: `oklch(0.13 0.01 260 / 0.06)` — Sombra tintada al tono del fondo
 
 ### Named Rules
-**La Regla del Acento Único.** El azul primario es el único color de acento. Nunca se combina con un segundo acento. Si necesitas llamar la atención, usa el azul más saturado o más claro, no un color diferente.
+**Regla del Acento Único.** Acero-azul es el único color de acento. Nunca combinado con un segundo acento.
 
-**La Regla del 15%.** El azul primario no ocupa más del 15% del área de cualquier pantalla. Su rareza es lo que le da potencia.
+**Regla Fría.** Los neutros son fríos (hue ~260). No hay tonos cálidos en la paleta base.
 
 ## 3. Typography
 
-**Display & Body Font:** `Inter` (via `var(--font-sans)`) — sans-serif humanista, legible, profesional. Sin serifa display separada; el sistema usa una sola familia para máxima consistencia.
+**Familia única:** `Geist` (via `next/font/google`) — sans-serif geométrica con calidez minimalista, la misma que usa Vercel. Sin serifa display separada.
 
-**Character:** Neutra, funcional, moderna. Inter combina claridad técnica (buena para precios, especificaciones) con calidez humanista (buena para copy de confianza).
+**Character:** Precisa, moderna, legible. Geist combina claridad técnica con la calidez justa para no sentirse fría.
 
 ### Hierarchy
-- **Display** (`font-bold`, `leading-tight`, `text-3xl` → `text-5xl/6xl`): Títulos de landing y hero. Solo en páginas de aterrizaje.
-- **Headline** (`font-bold`, `text-2xl/3xl`): Títulos de sección ("Categorías", "Productos Destacados").
-- **Title** (`font-semibold`, `text-base`): Títulos de cards, nombres de producto, encabezados de página.
-- **Body** (`font-normal`, `text-sm`): Texto general, descripciones, párrafos. Máximo 65-75 caracteres por línea.
-- **Label** (`font-medium`, `text-xs`, `tracking-wide`): Botones, badges, etiquetas de formulario, metadatos.
+- **Display** (`font-bold`, `tracking-tight`, `text-4xl` → `text-6xl`, `leading-[1.05]`): Hero y titulares principales. `text-balance`.
+- **Heading** (`font-bold`, `tracking-tight`, `text-2xl/3xl`): Encabezados de sección.
+- **Title** (`font-semibold`, `text-base`): Nombres de producto, títulos de card.
+- **Body** (`text-sm`, `leading-relaxed`, `color: oklch(0.45 0.01 260)`): Descripciones, párrafos. Max 65-75ch.
+- **Label** (`text-xs`, `font-semibold`, `uppercase`, `tracking-widest`): Categorías, metadatos, badges.
+- **Caption** (`text-xs`, `color: oklch(0.56 0.01 260)`): Fechas, información secundaria.
 
 ### Named Rules
-**La Regla de una Sola Familia.** Todo el sistema usa Inter. Sin fuentes display decorativas, sin mono para código. La variación viene de weight y size, no de cambios de familia.
+**Regla de una Sola Familia.** Geist en todos lados. La variación viene de weight, size, y tracking. Sin fuentes decorativas.
 
-## 4. Elevation
+## 4. Liquid Glass System
 
-Sistema plano con anillos. No se usan sombras `box-shadow`. La profundidad se comunica mediante bordes sutiles (`ring-1 ring-foreground/10`) que separan superficies sin crear sombras falsas. Los hover states usan cambios de color de fondo, no elevación.
+El sistema reemplaza cards tradicionales (border + bg sólido) por paneles de vidrio. No hay `ring-1` genérico — cada panel usa glass tokens.
 
-Cards, modales, dropdowns y sidebars usan el mismo principio: borde de 1px (ring) para definir el límite, fondo blanco para destacar contra el fondo de página.
+### Glass Panel (Default)
+```
+background: oklch(1 0 0 / 0.6)
+backdrop-filter: blur(16px)
+border: 1px solid oklch(1 0 0 / 0.8)
+box-shadow:
+  0 1px 0 oklch(1 0 0 / 0.5)        /* highlight interno */
+  0 4px 24px oklch(0.13 0.01 260 / 0.06)  /* sombra tintada */
+rounded-2xl (1.25rem)
+```
 
-### Shadow Vocabulary
-- **Card / Surface** (`ring-1 ring-foreground/10`): Toda superficie elevada. Cards, sidebars, modales.
-- **Hover state**: Se intensifica el color de fondo o borde, no se añade sombra. Ej: `hover:border-blue-100 hover:shadow-lg` en cards de landing (excepción controlada para la página principal).
+### Glass Panel (Strong)
+```
+background: oklch(1 0 0 / 0.75)
+backdrop-filter: blur(24px)
+box-shadow:
+  inset 0 1px 0 oklch(1 0 0 / 0.6)
+  0 8px 32px oklch(0.13 0.01 260 / 0.08)
+rounded-2xl (1.25rem)
+```
+
+### Scrollbar
+- 6px width, thumb con 15% de acero-azul, hover 30%
+- Track transparente
+
+### Selection
+- Fondo con 25% de acero-azul
 
 ### Named Rules
-**La Regla del Anillo.** Toda superficie usa `ring-1` para definirse. No hay `box-shadow` en el sistema base. Excepciones solo en landing page para efecto visual.
+**Regla del Vidrio.** Toda superficie elevada usa glass tokens. No hay ring-1, no hay box-shadow genérico.
+**Regla del Highlight.** Todo panel glass tiene highlight interno superior para simular refracción de luz.
 
 ## 5. Components
 
+### GlassPanel
+- `as` prop: div (default), section, article, aside
+- `variant`: "default" (translúcido) | "strong" (más opaco)
+- Props estándar HTML (className, style, etc.) spread automáticamente
+
+### WhatsApp Floating Button
+- Position: fixed bottom-6 right-6 (desktop: bottom-8 right-8)
+- Tamaño: 56px, rounded-full
+- Gradiente verde: #25D366 → #128C7E
+- Hover: escala 1.08, sombra intensificada
+- Variant: "floating" (fixed) | "inline" (flow)
+
 ### Buttons
-- **Shape:** `rounded-xl` (11.2px radius). Bordes suaves pero no pill-shaped.
-- **Primary:** Fondo azul Container, texto blanco, padding 12px 24px. `hover:brightness-110`, `active:scale-[0.98]`.
-- **Outline:** Borde gris, texto foreground, fondo transparente. `hover:bg-muted`.
-- **Ghost:** Sin borde, `hover:bg-muted`.
-- **Destructive:** Fondo rojo 10%, texto rojo. `hover:bg-destructive/20`.
-- **Size default:** 32px height. Variantes xs (24px), sm (28px), lg (36px).
+- **Primary:** Fondo acero-azul + box-shadow con tinted accent shadow. Hover: más oscuro. Active: scale(0.97).
+- **Ghost:** Sin fondo. Hover: 8% acero-azul. Active: scale(0.97).
+- **WhatsApp:** Gradiente verde linear(135deg). Hover: más oscuro + shadow intensificado.
 
-### Cards
-- **Corner Style:** `rounded-xl` (11.2px radius) con `ring-1 ring-foreground/10`.
-- **Background:** Card white (`oklch(1 0 0)`).
-- **Shadow:** Usa ring, no box-shadow (ver Elevación). Excepción: landing page cards usan `shadow-sm` + `hover:shadow-lg`.
-- **Internal Padding:** `--card-spacing` = 16px (spacing-md). Variante `sm` = 12px.
-- **Structure:** Header (title + description + action), Content, Footer.
+### Navigation
+- **Desktop:** Fixed top-0. Glass bg con scrolled detection. Links con hover/active acero-azul. Underline animado en active.
+- **Mobile:** Drawer glass desde derecha. Links con highlight acero-azul 8% en active.
 
-### Inputs / Fields
-- **Style:** Borde `ring-1` color border, fondo transparente, `rounded-lg` (6.4px).
-- **Focus:** Borde cambia a ring primary + `ring-3 ring-ring/50`.
-- **Error:** Borde destructive + `ring-3 ring-destructive/20`.
-- **Disabled:** 50% opacidad, fondo muted.
+### ProductCard
+- **Corner:** rounded-2xl
+- **Container:** glass panel default
+- **Image:** Aspect ratio 1:1, object-cover, hover scale(1.1) con 500ms ease-out
+- **Info:** Categoría como label uppercase, nombre ink, precio acero-azul bold
+- Stock indicators: amber (bajo stock, 5 o menos), green (en stock)
 
-### Chips / Category Pills
-- **Style:** `rounded-full` (pill), border gris, padding 4px 16px, texto xs font-medium.
-- **Selected:** Fondo azul Container + texto blanco. Sin borde.
-- **Unselected:** Borde gris, texto gris, `hover:border-blue-300 hover:text-blue-600`.
+### Inputs
+- Borde boundary, fondo glass (60% opaco)
+- Focus: borde acero-azul 50% + box-shadow 3px con 12% acero-azul
 
-### Navigation (Storefront)
-- **Desktop:** Links en texto foreground. Hover → azul. Active → azul + underline animado (`.nav-link-active`).
-- **Mobile:** Drawer full-height con links en columna. Fondo blanco.
+### Forms (ReviewForm)
+- Glass panel strong container
+- Inputs con glass styling
+- WhatsApp CTA inline
 
-### Badges
-- **Style:** `rounded-4xl` (pill shape), `h-5`, padding 2px 10px, `text-xs font-medium`.
-- **Default:** Fondo primary, texto blanco.
-- **Secondary:** Fondo secondary, texto secondary-foreground.
-- **Destructive:** Fondo rojo 10%, texto rojo.
-- **Outline:** Borde gris, texto foreground.
-- **Discount badge:** Fondo rojo 500, texto blanco bold, `rounded-full`, `shadow-lg`.
+## 6. Animation
 
-### Tooltips
-- Fondo foreground, texto background, `rounded-md`, padding 4px 8px, `text-xs`.
+### Easing Global
+```css
+--ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+```
 
-## 6. Do's and Don'ts
+### Durationes
+| Elemento | Duración |
+|----------|----------|
+| fade-in, slide-up | 0.6s |
+| scale-in | 0.5s |
+| Hover en card | 500ms |
+| Hover en botón | 200ms |
+| Press feedback | 160ms |
+
+### Animaciones Definidas
+- `animate-fade-in`: `opacity: 0 → 1`
+- `animate-slide-up`: `opacity: 0 + translateY(12px) → 1 + 0`
+- `animate-scale-in`: `opacity: 0 + scale(0.95) → 1 + scale(1)`
+- `animate-float`: `translateY(0) → (-8px) → 0` ciclo 6s
+
+### Reduced Motion
+Todas las animaciones colapsan a `animation: none` bajo `prefers-reduced-motion: reduce`.
+
+## 7. Layout
+
+- **Page max-width:** 1280px (max-w-7xl)
+- **Section spacing:** 5rem (80px) vertical
+- **Padding default:** 1rem (16px) en mobile, 2rem (32px) en desktop
+- **Grid default:** `gap-6` (24px)
+- **Responsive:** Mobile-first. sm 640, md 768, lg 1024, xl 1280
+
+### Fixed Header Compensation
+El nav es `fixed top-0` con glass effect. Todo contenido de página necesita `pt-24` (96px) o `pt-16` (64px para páginas sin hero) para compensar.
+
+## 8. Do's and Don'ts
 
 ### Do:
-- **Do** usar azul Container como único acento cromático.
-- **Do** mantener whitespace generoso entre elementos — si dudas si sobra espacio, déjalo.
-- **Do** usar `rounded-xl` (11.2px) como radio default para superficies.
-- **Do** usar `ring-1 ring-foreground/10` para definir cards y superficies.
-- **Do** mantener botones primarios con padding 12px 24px y `rounded-xl`.
-- **Do** usar motion sutil (3-4/10): transiciones de 150-200ms, ease-out para entradas.
-- **Do** usar active `scale-[0.98]` en botones para feedback táctil.
-- **Do** mantener consistencia radical — si un patrón existe en un lugar, existe en todos.
+- **Do** usar glass tokens en toda superficie elevada
+- **Do** mantener acero-azul como único acento
+- **Do** whitespace generoso (secciones de 5rem)
+- **Do** usar `text-balance` en headings
+- **Do** animaciones de entrada con cubic-bezier(0.16, 1, 0.3, 1)
+- **Do** active scale(0.97) en todo elemento presionable
+- **Do** producto como protagonista — la UI se desvanece
 
 ### Don't:
-- **Don't** usar sombras `box-shadow` en el sistema base. Usa rings.
-- **Don't** mezclar colores de acento. Azul es el único.
-- **Don't** crear diseños genéricos o template-like — cada página debe sentirse intencional.
-- **Don't** sobrecargar la UI con banners, múltiples CTAs, o elementos compitiendo.
-- **Don't** usar `transition: all` — sé explícito con las propiedades a transicionar.
-- **Don't** usar `ease-in` en UI — retrasa la respuesta que el usuario más observa.
-- **Don't** usar animaciones >300ms en elementos UI sin justificación explícita.
-- **Don't** usar gradientes excesivos — el gradiente hero es la única excepción controlada.
-- **Don't** apilar información sin jerarquía visual clara.
+- **Don't** usar beige/crema/cálidos en fondos — la paleta es fría
+- **Don't** usar ring-1 genérico — usa glass tokens
+- **Don't** usar box-shadow genérico — sombras tintadas al tono
+- **Don't** usar gradient en botones que no sean WhatsApp
+- **Don't** mezclar acentos cromáticos
+- **Don't** usar backgrounds sólidos blancos en paneles — usa glass translúcido
+- **Don't** animar con duraciones >300ms en elementos UI recurrentes
+
+## 9. Admin Panel
+
+El admin mantiene su propio estilo utilitario (no glass). Tablas, formularios, y layouts funcionales. No sigue la estética Liquid Glass del storefront. Usa shadcn/ui como base.

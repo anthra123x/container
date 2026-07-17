@@ -7,10 +7,6 @@ import {
   Package,
   FolderTree,
   Tag,
-  ShoppingCart,
-  Users,
-  BarChart3,
-  Megaphone,
   Settings,
   Shield,
   MessageSquare,
@@ -52,10 +48,6 @@ const sidebarIcons: Record<string, React.ComponentType<{ className?: string }>> 
   Package,
   FolderTree,
   Tag,
-  ShoppingCart,
-  Users,
-  BarChart3,
-  Megaphone,
   MessageSquare,
   Settings,
   Shield,
@@ -69,11 +61,7 @@ function AdminSidebar({ userRole }: { userRole: string }) {
     { href: "/admin/productos", label: "Productos", icon: "Package" },
     { href: "/admin/categorias", label: "Categorías", icon: "FolderTree" },
     { href: "/admin/marcas", label: "Marcas", icon: "Tag" },
-    { href: "/admin/ventas", label: "Ventas", icon: "ShoppingCart" },
-    { href: "/admin/clientes", label: "Clientes", icon: "Users" },
-    { href: "/admin/reportes", label: "Reportes", icon: "BarChart3" },
     { href: "/admin/resenas", label: "Reseñas", icon: "MessageSquare" },
-    { href: "/admin/promociones", label: "Promociones", icon: "Megaphone" },
     ...(canManageUsers ? [{ href: "/admin/usuarios", label: "Usuarios", icon: "Shield" as const }] : []),
     { href: "/admin/configuracion", label: "Configuración", icon: "Settings" },
   ]
@@ -141,8 +129,6 @@ function AdminNavbar({ user }: { user: { name?: string | null } }) {
 const mobileLinks = [
   { href: "/admin", label: "Dashboard", icon: "LayoutDashboard" },
   { href: "/admin/productos", label: "Productos", icon: "Package" },
-  { href: "/admin/ventas", label: "Ventas", icon: "ShoppingCart" },
-  { href: "/admin/clientes", label: "Clientes", icon: "Users" },
   { href: "/", label: "Tienda", icon: "ArrowLeft" },
 ]
 

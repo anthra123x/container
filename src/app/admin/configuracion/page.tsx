@@ -9,15 +9,11 @@ export default async function AdminConfigPage() {
   const session = await auth()
   if (!session?.user) redirect("/login")
 
-  const config = await prisma.storeConfiguration.findFirst({
-    where: { storeId: session.user.storeId as string },
-  })
+  const config = await prisma.storeConfiguration.findFirst()
 
   async function updateConfig(formData: FormData) {
     "use server"
-    const currentSession = await requireAdminRole(3)
-
-    const storeId = currentSession.user.storeId as string
+    await requireAdminRole(3)
 
     const data = {
       storeName: formData.get("storeName") as string,
@@ -31,16 +27,16 @@ export default async function AdminConfigPage() {
       termsText: (formData.get("termsText") as string) || null,
       privacyText: (formData.get("privacyText") as string) || null,
       shippingInfo: (formData.get("shippingInfo") as string) || null,
-      paymentInfo: (formData.get("paymentInfo") as string) || null,
       metaTitle: (formData.get("metaTitle") as string) || null,
       metaDescription: (formData.get("metaDescription") as string) || null,
     }
 
-    await prisma.storeConfiguration.upsert({
-      where: { storeId },
-      update: data,
-      create: { storeId, ...data },
-    })
+    const existing = await prisma.storeConfiguration.findFirst()
+    if (existing) {
+      await prisma.storeConfiguration.update({ where: { id: existing.id }, data })
+    } else {
+      await prisma.storeConfiguration.create({ data: { id: "default", ...data } })
+    }
 
     redirect("/admin/configuracion")
   }
@@ -78,7 +74,7 @@ export default async function AdminConfigPage() {
         </div>
 
         <div className="rounded-lg border bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">Contacto</h2>
+          <h2 className="mb-4 text-lg font-semibold">Contacto y WhatsApp</h2>
           <div className="space-y-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium">Número de WhatsApp</label>
@@ -192,7 +188,7 @@ export default async function AdminConfigPage() {
         </div>
 
         <div className="rounded-lg border bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">Información de envío y pago</h2>
+          <h2 className="mb-4 text-lg font-semibold">Información de envío</h2>
           <div className="space-y-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium">Info de envío</label>
@@ -200,15 +196,6 @@ export default async function AdminConfigPage() {
                 name="shippingInfo"
                 rows={3}
                 defaultValue={config?.shippingInfo ?? ""}
-                className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">Info de pago</label>
-              <textarea
-                name="paymentInfo"
-                rows={3}
-                defaultValue={config?.paymentInfo ?? ""}
                 className="w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>

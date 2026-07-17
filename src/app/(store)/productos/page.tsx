@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { prisma, withRetry } from "@/lib/db"
+import { withRetry } from "@/lib/db"
 import { getFilteredProducts, getCatalogFacets } from "@/lib/queries/products"
 import { ProductCard } from "@/components/store/ProductCard"
 import { FilterSidebar } from "@/components/store/FilterSidebar"
@@ -11,13 +11,6 @@ export const dynamic = "force-dynamic"
 interface Props {
   searchParams: Promise<{ [key: string]: string | undefined }>
 }
-
-const SORT_OPTIONS = [
-  { value: "newest", label: "Más recientes" },
-  { value: "price_asc", label: "Precio: menor a mayor" },
-  { value: "price_desc", label: "Precio: mayor a menor" },
-  { value: "name", label: "Nombre A-Z" },
-] as const
 
 export default async function StoreProductsPage({ searchParams }: Props) {
   const sp = await searchParams
@@ -68,8 +61,8 @@ export default async function StoreProductsPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <div className="flex gap-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 pt-24">
+      <div className="flex gap-10">
         <aside className="hidden w-64 shrink-0 lg:block">
           <FilterSidebar
             categories={facets.categories}
@@ -83,12 +76,12 @@ export default async function StoreProductsPage({ searchParams }: Props) {
         </aside>
 
         <div className="min-w-0 flex-1">
-          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+              <h1 className="text-3xl font-bold tracking-tight" style={{ color: "oklch(0.13 0.01 260)" }}>
                 {search ? `"${search}"` : activeCategory ? activeCategory.name : brandSlug ? activeBrand?.name ?? "Productos" : "Productos"}
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="mt-1 text-sm" style={{ color: "oklch(0.56 0.01 260)" }}>
                 {total} producto{total !== 1 ? "s" : ""}
                 {search && <> para &ldquo;{search}&rdquo;</>}
               </p>
@@ -120,7 +113,6 @@ export default async function StoreProductsPage({ searchParams }: Props) {
                 slug={product.slug}
                 name={product.name}
                 price={Number(product.price)}
-                comparePrice={product.comparePrice ? Number(product.comparePrice) : null}
                 imageUrl={product.images[0]?.url ?? null}
                 imageAlt={product.images[0]?.alt ?? null}
                 categoryName={product.category?.name}
@@ -130,14 +122,23 @@ export default async function StoreProductsPage({ searchParams }: Props) {
           </div>
 
           {products.length === 0 && (
-            <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/50 py-16 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div
+              className="rounded-2xl py-16 text-center"
+              style={{
+                border: "1px dashed oklch(0.92 0.004 260)",
+                background: "oklch(0.96 0.004 260 / 0.5)",
+              }}
+            >
+              <div
+                className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full"
+                style={{ background: "oklch(0.92 0.004 260)" }}
+              >
+                <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} style={{ color: "oklch(0.56 0.01 260)" }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 11.625l2.25-2.25M12 11.625l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                 </svg>
               </div>
-              <h2 className="text-lg font-semibold text-gray-900">No se encontraron productos</h2>
-              <p className="mt-1 text-sm text-gray-500">Intenta con otros filtros o términos de búsqueda</p>
+              <h2 className="text-lg font-semibold" style={{ color: "oklch(0.13 0.01 260)" }}>No se encontraron productos</h2>
+              <p className="mt-1 text-sm" style={{ color: "oklch(0.56 0.01 260)" }}>Intenta con otros filtros o términos de búsqueda</p>
               <Link href="/productos" className="btn-primary mt-6 gap-2">
                 Ver todos los productos
               </Link>

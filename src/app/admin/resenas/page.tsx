@@ -15,7 +15,6 @@ export default async function AdminReviewsPage() {
     orderBy: [{ isApproved: "asc" }, { createdAt: "desc" }],
     include: {
       product: { select: { id: true, name: true, slug: true } },
-      order: { select: { id: true } },
     },
     take: 100,
   })
@@ -76,7 +75,6 @@ function ReviewCard({
     isApproved: boolean
     createdAt: Date
     product: { id: string; name: string; slug: string }
-    order: { id: string }
   }
 }) {
   return (
@@ -100,12 +98,6 @@ function ReviewCard({
             <span>{review.customerName}</span>
             <span>{review.phone}</span>
             <span>{formatDateTime(review.createdAt)}</span>
-            <Link
-              href={`/admin/ventas/${review.order.id}`}
-              className="text-blue-600 hover:underline"
-            >
-              Pedido #{review.order.id.slice(0, 8)}
-            </Link>
           </div>
         </div>
         <div className="flex items-center gap-2">
