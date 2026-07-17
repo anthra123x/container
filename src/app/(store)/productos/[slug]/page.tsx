@@ -100,9 +100,9 @@ export default async function ProductDetailPage({ params }: Props) {
       />
       <div className="mx-auto max-w-7xl px-4 py-8 pt-24">
         <nav className="mb-8 flex items-center gap-1 text-sm" style={{ color: "oklch(0.56 0.01 260)" }}>
-          <Link href="/" className="transition-colors" style={{ color: "oklch(0.56 0.01 260)" }} onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"} onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.56 0.01 260)"}>Inicio</Link>
+          <Link href="/" className="hover-accent transition-colors" style={{ color: "oklch(0.56 0.01 260)" }}>Inicio</Link>
           <ChevronRight className="h-3.5 w-3.5" />
-          <Link href={`/productos?categoria=${product.category.slug}`} className="transition-colors" style={{ color: "oklch(0.56 0.01 260)" }} onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"} onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.56 0.01 260)"}>
+          <Link href={`/productos?categoria=${product.category.slug}`} className="hover-accent transition-colors" style={{ color: "oklch(0.56 0.01 260)" }}>
             {product.category.name}
           </Link>
           <ChevronRight className="h-3.5 w-3.5" />
@@ -200,18 +200,7 @@ export default async function ProductDetailPage({ params }: Props) {
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex w-full items-center justify-center gap-3 px-6 py-4 text-base font-semibold text-white transition-all active:scale-[0.98]"
-                  style={{
-                    background: "linear-gradient(135deg, #25D366, #128C7E)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "linear-gradient(135deg, #20b038, #0e7a6a)"
-                    e.currentTarget.style.boxShadow = "0 8px 24px rgba(37, 211, 102, 0.35)"
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "linear-gradient(135deg, #25D366, #128C7E)"
-                    e.currentTarget.style.boxShadow = "none"
-                  }}
+                  className="btn-whatsapp"
                 >
                   <MessageCircle className="h-5 w-5" />
                   Comprar por WhatsApp

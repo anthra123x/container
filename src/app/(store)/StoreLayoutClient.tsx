@@ -107,21 +107,17 @@ function StoreNavbar({ config }: { config: StoreConfig }) {
         </nav>
 
         <div className="flex items-center gap-1">
-          <Link
+          <a
             href="/buscar"
-            className="rounded-full p-2.5 transition-colors"
+            className="hover-accent rounded-full p-2.5 transition-colors"
             style={{ color: "oklch(0.45 0.01 260)" }}
-            onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"}
-            onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.45 0.01 260)"}
           >
             <Search className="h-5 w-5" />
-          </Link>
+          </a>
           <button
             onClick={() => setMobileOpen(true)}
-            className="rounded-full p-2.5 transition-colors md:hidden"
+            className="hover-accent rounded-full p-2.5 transition-colors md:hidden"
             style={{ color: "oklch(0.45 0.01 260)" }}
-            onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"}
-            onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.45 0.01 260)"}
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -150,42 +146,29 @@ function StoreNavbar({ config }: { config: StoreConfig }) {
               </div>
               <button
                 onClick={() => setMobileOpen(false)}
-                className="rounded-full p-1.5 transition-colors"
+                className="hover-accent rounded-full p-1.5 transition-colors"
                 style={{ color: "oklch(0.45 0.01 260)" }}
-                onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"}
-                onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.45 0.01 260)"}
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <nav className="flex-1 space-y-1 px-3 py-4">
               {navLinks.map((link) => {
-                const isActive = pathname === link.href
                 return (
-                  <Link
+                  <a
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center rounded-lg px-4 py-3 text-sm font-medium transition-colors"
+                    className={`flex items-center rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                      pathname === link.href ? "" : "hover-glass-bg"
+                    }`}
                     style={{
-                      color: isActive ? "oklch(0.55 0.18 255)" : "oklch(0.45 0.01 260)",
-                      background: isActive ? "oklch(0.55 0.18 255 / 0.08)" : "transparent",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isActive) {
-                        e.currentTarget.style.background = "oklch(0.55 0.18 255 / 0.05)"
-                        e.currentTarget.style.color = "oklch(0.55 0.18 255)"
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) {
-                        e.currentTarget.style.background = "transparent"
-                        e.currentTarget.style.color = "oklch(0.45 0.01 260)"
-                      }
+                      color: pathname === link.href ? "oklch(0.55 0.18 255)" : "oklch(0.45 0.01 260)",
+                      background: pathname === link.href ? "oklch(0.55 0.18 255 / 0.08)" : "transparent",
                     }}
                   >
                     {link.label}
-                  </Link>
+                  </a>
                 )
               })}
             </nav>
@@ -231,9 +214,9 @@ function StoreFooter({ config }: { config: StoreConfig }) {
               Tienda
             </h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/productos" className="transition-colors" style={{ color: "oklch(0.45 0.01 260)" }} onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"} onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.45 0.01 260)"}>Productos</Link></li>
-              <li><Link href="/categorias" className="transition-colors" style={{ color: "oklch(0.45 0.01 260)" }} onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"} onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.45 0.01 260)"}>Categorías</Link></li>
-              <li><Link href="/contacto" className="transition-colors" style={{ color: "oklch(0.45 0.01 260)" }} onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"} onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.45 0.01 260)"}>Contacto</Link></li>
+              <li><Link href="/productos" className="hover-accent transition-colors" style={{ color: "oklch(0.45 0.01 260)" }}>Productos</Link></li>
+              <li><Link href="/categorias" className="hover-accent transition-colors" style={{ color: "oklch(0.45 0.01 260)" }}>Categorías</Link></li>
+              <li><Link href="/contacto" className="hover-accent transition-colors" style={{ color: "oklch(0.45 0.01 260)" }}>Contacto</Link></li>
             </ul>
           </div>
           <div>
@@ -241,10 +224,10 @@ function StoreFooter({ config }: { config: StoreConfig }) {
               Información
             </h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/envio" className="transition-colors" style={{ color: "oklch(0.45 0.01 260)" }} onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"} onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.45 0.01 260)"}>Envíos</Link></li>
-              <li><Link href="/devoluciones" className="transition-colors" style={{ color: "oklch(0.45 0.01 260)" }} onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"} onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.45 0.01 260)"}>Devoluciones</Link></li>
-              <li><Link href="/terminos" className="transition-colors" style={{ color: "oklch(0.45 0.01 260)" }} onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"} onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.45 0.01 260)"}>Términos</Link></li>
-              <li><Link href="/privacidad" className="transition-colors" style={{ color: "oklch(0.45 0.01 260)" }} onMouseEnter={(e) => e.currentTarget.style.color = "oklch(0.55 0.18 255)"} onMouseLeave={(e) => e.currentTarget.style.color = "oklch(0.45 0.01 260)"}>Privacidad</Link></li>
+              <li><Link href="/envio" className="hover-accent transition-colors" style={{ color: "oklch(0.45 0.01 260)" }}>Envíos</Link></li>
+              <li><Link href="/devoluciones" className="hover-accent transition-colors" style={{ color: "oklch(0.45 0.01 260)" }}>Devoluciones</Link></li>
+              <li><Link href="/terminos" className="hover-accent transition-colors" style={{ color: "oklch(0.45 0.01 260)" }}>Términos</Link></li>
+              <li><Link href="/privacidad" className="hover-accent transition-colors" style={{ color: "oklch(0.45 0.01 260)" }}>Privacidad</Link></li>
             </ul>
           </div>
           <div>

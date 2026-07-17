@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { prisma } from "@/lib/db"
 import StoreLayoutClient from "./StoreLayoutClient"
 
+export const dynamic = "force-dynamic"
+
 export async function generateMetadata(): Promise<Metadata> {
   const config = await prisma.storeConfiguration.findFirst({
     select: { storeName: true, metaTitle: true, metaDescription: true },

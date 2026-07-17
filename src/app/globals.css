@@ -141,6 +141,21 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .hover-accent {
+    transition: color 0.2s ease;
+  }
+  .hover-accent:hover {
+    color: oklch(0.55 0.18 255) !important;
+  }
+
+  .hover-glass-bg {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .hover-glass-bg:hover {
+    background: oklch(0.55 0.18 255 / 0.05) !important;
+    color: oklch(0.55 0.18 255) !important;
+  }
 }
 
 @layer components {
@@ -197,6 +212,15 @@
     box-shadow: 0 0 0 3px oklch(0.55 0.18 255 / 0.12);
   }
 
+  .btn-whatsapp {
+    @apply flex w-full items-center justify-center gap-3 px-6 py-4 text-base font-semibold text-white transition-all duration-300 active:scale-[0.98];
+    background: linear-gradient(135deg, #25D366, #128C7E);
+  }
+  .btn-whatsapp:hover {
+    background: linear-gradient(135deg, #20b038, #0e7a6a) !important;
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.35);
+  }
+
   .overlay-outofstock {
     @apply absolute inset-0 z-10 flex items-center justify-center;
     background: oklch(0.13 0.01 260 / 0.3);
@@ -245,6 +269,31 @@
   50% { transform: translateY(-8px); }
 }
 
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes reveal-scale {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes blur-in {
+  from { opacity: 0; filter: blur(6px); transform: scale(0.97); }
+  to { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+
+@keyframes reveal-right {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes image-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.04); }
+}
+
 .animate-fade-in {
   animation: fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -261,11 +310,36 @@
   animation: float 6s ease-in-out infinite;
 }
 
+.animate-reveal-up {
+  animation: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-reveal-scale {
+  animation: reveal-scale 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-blur-in {
+  animation: blur-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-reveal-right {
+  animation: reveal-right 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-image-zoom {
+  animation: image-zoom 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
   .animate-slide-up,
   .animate-scale-in,
-  .animate-float {
+  .animate-float,
+  .animate-reveal-up,
+  .animate-reveal-scale,
+  .animate-blur-in,
+  .animate-reveal-right,
+  .animate-image-zoom {
     animation: none;
   }
 }

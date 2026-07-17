@@ -35,7 +35,10 @@ export function ProductCard({
     >
       <div
         className="relative aspect-square overflow-hidden"
-        style={{ background: "oklch(0.96 0.004 260)" }}
+        style={{
+          background: "oklch(0.96 0.004 260)",
+          boxShadow: "inset 0 0 0 1px oklch(0.13 0.01 260 / 0.04)",
+        }}
       >
         {imageUrl ? (
           <Image

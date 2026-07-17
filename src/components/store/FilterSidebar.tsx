@@ -269,25 +269,11 @@ function FilterLink({
     <a
       href={href}
       className={`flex items-center justify-between rounded-lg px-3 py-1.5 text-sm transition-colors ${
-        active
-          ? "font-medium"
-          : ""
+        active ? "font-medium" : "hover-glass-bg"
       }`}
       style={{
         color: active ? "oklch(0.55 0.18 255)" : "oklch(0.45 0.01 260)",
         background: active ? "oklch(0.55 0.18 255 / 0.08)" : "transparent",
-      }}
-      onMouseEnter={(e) => {
-        if (!active) {
-          e.currentTarget.style.background = "oklch(0.55 0.18 255 / 0.05)"
-          e.currentTarget.style.color = "oklch(0.55 0.18 255)"
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!active) {
-          e.currentTarget.style.background = "transparent"
-          e.currentTarget.style.color = "oklch(0.45 0.01 260)"
-        }
       }}
     >
       <span>{label}</span>
